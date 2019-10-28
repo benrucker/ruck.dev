@@ -1,0 +1,29 @@
+html {
+	font-family: Helvetica;
+	background: #222437;
+	color: WhiteSmoke;
+}
+
+h1 {
+	text-align: right;
+}
+
+h3 {
+	text-align: center;
+}
+
+p {
+	width: 10em;
+	color: Cyan;
+	position: relative;
+}
+p:hover {
+	color: white;
+	animation: jiggle 10ms infinite 0s alternate;
+}
+
+
+@keyframes jiggle {
+	from {top: 0px;}
+	to {top: 10px;}
+}
