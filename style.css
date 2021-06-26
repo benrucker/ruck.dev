@@ -1,141 +1,39 @@
-/*
-font-family: 'Source Code Pro', monospace;
-font-family: 'Source Sans Pro', sans-serif;
-*/
-
-html {
-  font-family: 'Source Sans Pro', sans-serif;
+body { 
+  background-color: black;
   color: white;
 }
 
-h1 {
-  text-align: center;
-}
-
-iframe {
-  padding: 1em;
-}
-
 .title {
-  margin: 3em 1em 10% 10%;
-  text-align: center;
-  font-family: 'Source Code Pro', monospace;
-  font-weight: 200;
-  font-size: 3em;
-  /* text-shad: offX offY rad col */
-  text-shadow: 0em 0em .2em white;
+  position: absolute;
+  line-height: .75em;
+  font-size: 8em;
 }
 
-.banner {
-  font-size: 1.5em;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 700;
-  text-align: center;
-  margin: 3em 3em;
-  padding: 3em 3em 10% 10%;
+.outline { 
+  -webkit-text-fill-color: rgba(0,0,0,0);
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: white;
 }
 
-.right {
-  float: right;
+#title-fill {
+  /* color: blue; */
+  animation-name: sheen;
+  animation-duration: .8s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
-.t-right {
-  text-align: right;
+#title-fill.gray {
+  color: orange;
+  animation-delay: 0.5s;
 }
 
-.vert-c {
-  display: table-cell;
-  vertical-align: middle;
+#title-fill.white {
+  color: white;
+  animation-delay: 0.57s;
 }
 
-.clear {
-    clear:both;
-}
-
-.ninety {
-  margin: 0 10%;
-}
-
-.bg {
-  background: #000;
-}
-
-.img-shadow {
-  box-shadow: 0em .1em 1em grey;
-}
-
-#banner-i {
-  /*padding: 3em 8em 20% 10%;*/
-  text-align: right;
-  position: relative;
-  top: 0;
-  font-size: 1.5em;
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 700;
-  margin: 3em 3em;
-  padding: 3em 6em 20% 10%;
-}
-
-.banner-anim {
-  text-align: right;
-  position: relative;
-  right: -2.1em; /* this shouldn't be needed aagh */
-  animation: banimate 4s infinite alternate;
-}
-
-#banner-list {
-  text-align: left;
-  padding: inherit;
-  float: right;
-  line-height: 1.6em;
-  font-weight: 300;
-  text-shadow: 0em 0.1em 0.8em whitesmoke;
-}
-
-#banner-hide-anim {
-  animation: banimate-hide-n0 4s infinite alternate;
-}
-
-@keyframes banimate-hide-n0 {
-  0% {opacity: 0;}
-  25% {opacity: 0;}
-  50% {opacity: 0;}
-  75% {opacity: 0;}
-  100% {opacity: 0;}
-}
-@keyframes banimate-hide-n1 {
-  0% {opacity: 1;}
-  25% {opacity: 1;}
-  50% {opacity: 0;}
-  75% {opacity: 0;}
-  100% {opacity: 0;}
-}
-@keyframes banimate-hide-n2 {
-  0% {opacity: 0;}
-  25% {opacity: 0;}
-  50% {opacity: 1;}
-  75% {opacity: 0;}
-  100% {opacity: 0;}
-}
-@keyframes banimate-hide-n3 {
-  0% {opacity: 0;}
-  25% {opacity: 0;}
-  50% {opacity: 0;}
-  75% {opacity: 1;}
-  100% {opacity: 0;}
-}
-@keyframes banimate-hide-n4 {
-  0% {opacity: 0;}
-  25% {opacity: 0;}
-  50% {opacity: 0;}
-  75% {opacity: 0;}
-  100% {opacity: 1;}
-}
-
-@keyframes banimate {
-  0% {top:0em;}
-  25% {top: 0em;}
-  50% {top: 1.6em;}
-  75% {top: 3.2em;}
-  100% {top: 4.8em;}
+@keyframes sheen {
+  0% { clip-path: polygon(100% -150%, 0% -125%, 0% 0%, 100% -25%) }
+  100% { clip-path: polygon(100% 110%, 0% 135%, 0% 260%, 100% 235%); }
 }
