@@ -3,11 +3,24 @@ body {
   color: white;
 }
 
+canvas {
+  width: 100%;
+  height: 100%;
+
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .title {
   position: absolute;
   line-height: .75em;
-  font-size: 8em;
-  letter-spacing: -0.05em;
+  font-size: 7em;
+}
+@media (min-width: 576px) { 
+  .title {
+    font-size: 8em;
+  }
 }
 
 .outline { 
@@ -39,10 +52,26 @@ body {
   100% { clip-path: polygon(100% 110%, 0% 135%, 0% 260%, 100% 235%); }
 }
 
-.nav-button {
-  background-color: rgba(0,0,0,0);
-  box-shadow: 0px 0px 0px 0px rgba(255,255,255,.1);
-  padding: 1em;
-  border-radius: 5px;
-  border: 2px solid #222;
+.buttons {
+  top: -50px;
+  animation-name: reveal;
+  animation-duration: .4s;
+  animation-delay: 2.2s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+}
+
+.buttons.orange { 
+  animation-name: sheen;
+  animation-duration: .7s;
+  animation-delay: 1.6s;
+}
+
+.btn-warning {
+  background-color: orange;
+}
+
+@keyframes reveal {
+  0% { clip-path: polygon(100% -150%, 0% -125%, 0% 0%, 100% -25%) }
+  100% { clip-path: polygon(100% -150%, 0% -125%, 0% 260%, 100% 235%); }
 }
