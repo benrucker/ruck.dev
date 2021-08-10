@@ -1,31 +1,92 @@
 <!DOCTYPE html>
 
 <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>
     Ben Rucker | ruck.dev
   </title>
+  <link rel="shortcut icon" type="image/webp" href="smol.webp"/>
 
-  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:200|Source+Sans+Pro:300,700&display=block"
-    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="style.css">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Ren Bucker's seb wite" />
+  <meta property="og:title" content="Ben Rucker" />
   <meta property="og:description" content="ruck.dev" />
   <meta property="og:url" content="https://ruck.dev" />
-  <meta property="og:image" content="https://ruck.dev/IMG_7194.JPG" />
+  <meta property="og:image" content="https://ruck.dev/big.jpg" />
 </head>
 
-<link rel="stylesheet" type="text/css" href="style.css">
+<body>
+  <canvas id="confetti"></canvas>
 
-<body class='bg'>
-  <div class="ninety">
-    <h1 class='title'>
-      Hi, I'm Ben Rucker.
-    </h1>
-    <div class='banner' id='banner-list'>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 col-lg-6">
+        <div class="d-flex vh-100 align-items-center" style="position: relative">
+          <h1 id="title-fill" class="title gray">
+            <b>Ben<br>Rucker</b>
+          </h1>
+          <h1 id="title-fill" class="title white">
+            <b>Ben<br>Rucker</b>
+          </h1>
+          <h1 class="title outline">
+            <b>Ben<br>Rucker</b>
+          </h1>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6 align-self-center" style="position: relative;">
+
+        <span class="buttons orange" style="position: absolute; width: 90%;">
+          <div class="row pb-3">
+            <div class="col-6 justify-content-center d-flex">
+              <a class="btn btn-warning btn-lg">Resume</a>
+            </div>
+            <div class="col-6 justify-content-center d-flex">
+              <a class="btn btn-warning btn-lg">GitHub</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 justify-content-center d-flex">
+              <a class="btn btn-warning btn-lg">LinkedIn</a>
+            </div>
+            <div class="col-6 justify-content-center d-flex" id="confetti">
+              <button type="button" class="btn btn-warning btn-lg">Confetti?</button>
+            </div>
+          </div>
+        </span>
+
+        <span class="buttons" style="position: absolute; width: 90%">
+          <div class="row pb-3">
+            <div class="col-6 justify-content-center d-flex">
+              <a href="resume.pdf" class="btn btn-outline-light btn-lg">Resume</a>
+            </div>
+            <div class="col-6 justify-content-center d-flex">
+              <a href="https://github.com/benrucker" class="btn btn-outline-light btn-lg">GitHub</a>
+            </div>
+          </div>
+          <div class="row pb-3">
+            <div class="col-6 justify-content-center d-flex">
+              <a href="https://linkedin.com/in/benrucker" class="btn btn-outline-light btn-lg">LinkedIn</a>
+            </div>
+            <div class="col-6 justify-content-center d-flex" id="confetti">
+              <button type="button" class="btn btn-outline-light btn-lg" onclick="toss()">Confetti!</button>
+            </div>
+          </div>
+        </span>
+
+      </div>
     </div>
-    <div class='banner' id='banner-i'>
-      <div class='banner-anim'>I'm a<span id='banner-hide-anim'>n</span></div>
-    </div>
-    <script src="random_attributes.js"></script>
+  </div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+  <script src="script.js"></script>
 </body>
