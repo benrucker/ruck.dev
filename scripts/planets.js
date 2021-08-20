@@ -19,7 +19,7 @@ class Planetoid {
 
         if (isNaN(mag))
             return
-        
+
         if (!isNaN(dx))
             this.xvel += dx * mag;
         if (!isNaN(dy))
@@ -47,21 +47,27 @@ function start() {
     var planetsCanvas = document.getElementById('planets');
     if (planetsCanvas.getContext) {
         ctx = planetsCanvas.getContext('2d');
-        ctx.canvas.width  = window.innerWidth;
-        ctx.canvas.height = window.innerHeight;
+
+        function resize() {
+            ctx.canvas.width = window.innerWidth;
+            ctx.canvas.height = window.innerHeight;
+        }
+        resize();
 
         document.body.addEventListener('mousemove', e => {
             mouse.x = e.clientX;
             mouse.y = e.clientY;
         });
 
+        window.addEventListener('resize', resize)
+
         var centerx = ctx.canvas.width / 2;
         var centery = ctx.canvas.height / 2;
 
         planets = new Set([
-            new Planetoid(centerx + 100, centery, 0, 15),
-            new Planetoid(centerx - 100, centery, 0, -15),
-            new Planetoid(centerx + 30, centery - 150, 15, 0),
+            new Planetoid(centerx * 1.3, centery, 0, 15),
+            new Planetoid(centerx - centerx * .3, centery, 0, -15),
+            new Planetoid(centerx + 10, centery * 1.5, -15, 0),
         ]);
 
         sun = {
@@ -69,7 +75,7 @@ function start() {
             y: centery,
             mass: 10,
         }
-        
+
         mouse = {
             x: centerx,
             y: centery,
@@ -100,13 +106,10 @@ function draw() {
 
     clearBackground();
 
-    let toRemove = [];
     for (planet of planets) {
         for (planet2 of planets) {
             if (planet2 != planet) {
                 if (planet.distance(planet2) < 5) {
-                    // toRemove.push(planet);
-                    // toRemove.push(planet2);
                     planets.delete(planet);
                     planets.delete(planet2)
                     break;
@@ -118,11 +121,6 @@ function draw() {
         planet.gravitate(sun);
     }
 
-    // for(planet of toRemove) {
-    //     planets.splice(planets.indexOf(planet), 1);
-    //     console.log('splicing', planet)
-    // }
-
     for (planet of planets) {
         planet.move(delta);
     }
@@ -133,7 +131,7 @@ function draw() {
         ctx.arc(planet.x, planet.y, 3, 0, 2 * Math.PI);
         ctx.fill();
     }
-    
+
     ctx.fillStyle = '#f5b55b';
     ctx.beginPath();
     ctx.arc(sun.x, sun.y, 5, 0, 2 * Math.PI);
@@ -143,7 +141,7 @@ function draw() {
 }
 
 function clearBackground() {
-    ctx.fillStyle = 'rgba(0,0,0,.5)';
+    ctx.fillStyle = 'rgba(0,0,0,.3)';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
