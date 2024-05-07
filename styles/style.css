@@ -1,6 +1,8 @@
-body { 
+body {
+  --primary: #dbcbb8;
+
   background-color: black;
-  color: white;
+  color: var(--primary);
 }
 
 canvas {
@@ -11,7 +13,7 @@ canvas {
   pointer-events: none;
 }
 
-canvas#confetti{
+canvas#confetti {
   z-index: 1;
 }
 
@@ -21,35 +23,35 @@ canvas#planets {
 
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 
 .title {
   position: absolute;
-  line-height: .75em;
+  line-height: 0.75em;
   font-size: 7em;
 }
-@media (min-width: 576px) { 
+@media (min-width: 576px) {
   .title {
     font-size: 8em;
   }
 }
 
-.outline { 
-  -webkit-text-fill-color: rgba(0,0,0,0);
+.outline {
+  -webkit-text-fill-color: rgba(0, 0, 0, 0);
   -webkit-text-stroke-width: 2px;
-  -webkit-text-stroke-color: white;
+  -webkit-text-stroke-color: var(--primary);
 }
 
 #title-fill {
   /* color: blue; */
   animation-name: sheen;
-  animation-duration: .8s;
+  animation-duration: 0.8s;
   animation-fill-mode: both;
   animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
@@ -60,27 +62,36 @@ canvas#planets {
 }
 
 #title-fill.white {
-  color: white;
+  color: var(--primary);
   animation-delay: 0.57s;
 }
 
 @keyframes sheen {
-  0% { clip-path: polygon(100% -150%, 0% -125%, 0% 0%, 100% -25%) }
-  100% { clip-path: polygon(100% 110%, 0% 135%, 0% 260%, 100% 235%); }
+  0% {
+    clip-path: polygon(100% -150%, 0% -125%, 0% 0%, 100% -25%);
+  }
+  100% {
+    clip-path: polygon(100% 110%, 0% 135%, 0% 260%, 100% 235%);
+  }
 }
 
 .buttons {
   top: -50px;
   animation-name: reveal;
-  animation-duration: .4s;
+  animation-duration: 0.4s;
   animation-delay: 2.2s;
   animation-fill-mode: both;
   animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+
+  .button {
+    color: var(--primary);
+    border-color: var(--primary);
+  }
 }
 
-.buttons.orange { 
+.buttons.orange {
   animation-name: sheen;
-  animation-duration: .7s;
+  animation-duration: 0.7s;
   animation-delay: 1.6s;
 }
 
@@ -89,6 +100,10 @@ canvas#planets {
 }
 
 @keyframes reveal {
-  0% { clip-path: polygon(100% -150%, 0% -125%, 0% 0%, 100% -25%) }
-  100% { clip-path: polygon(100% -150%, 0% -125%, 0% 260%, 100% 235%); }
+  0% {
+    clip-path: polygon(100% -150%, 0% -125%, 0% 0%, 100% -25%);
+  }
+  100% {
+    clip-path: polygon(100% -150%, 0% -125%, 0% 260%, 100% 235%);
+  }
 }

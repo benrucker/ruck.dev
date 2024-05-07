@@ -1,152 +1,145 @@
-var ctx;
-var prevFrame;
-
-class Planetoid {
-    constructor(x, y, xvel, yvel) {
-        this.x = x;
-        this.y = y;
-        this.xvel = xvel;
-        this.yvel = yvel;
-        this.mass = 3;
-    }
-    move(delta) {
-        this.x += this.xvel * delta;
-        this.y += this.yvel * delta;
-    }
-    gravitate(other, delta) {
-        let [dist, dx, dy] = this.distanceAndComponents(other);
-        let mag = other.mass * -1 / (dist ** 2) * 5;
-
-        if (isNaN(mag))
-            return
-
-        if (!isNaN(dx))
-            this.xvel += dx * mag;
-        if (!isNaN(dy))
-            this.yvel += dy * mag;
-
-        // this.xvel = isNaN(this.xvel) ? 0 : this.xvel
-        // this.yvel = isNaN(this.yvel) ? 0 : this.yvel
-    }
-    distanceAndComponents(other) {
-        const dx = this.x - other.x;
-        const dy = this.y - other.y;
-
-        return [Math.hypot(dx, dy), dx, dy];
-    }
-    distance(other) {
-        return this.distanceAndComponents(other)[0]
-    }
-}
-
+let ctx;
+let prevFrameTime;
+let delta;
 let planets;
 let mouse;
 let sun;
 
 function start() {
-    var planetsCanvas = document.getElementById('planets');
-    if (planetsCanvas.getContext) {
-        ctx = planetsCanvas.getContext('2d');
+  const planetsCanvas = document.getElementById("planets");
+  if (planetsCanvas.getContext) {
+    ctx = planetsCanvas.getContext("2d");
 
-        function resize() {
-            ctx.canvas.width = window.innerWidth;
-            ctx.canvas.height = window.innerHeight;
-        }
-        resize();
-
-        document.body.addEventListener('mousemove', e => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        window.addEventListener('resize', resize)
-
-        var centerx = ctx.canvas.width / 2;
-        var centery = ctx.canvas.height / 2;
-
-        planets = new Set([
-            new Planetoid(centerx * 1.3, centery, 0, 15),
-            new Planetoid(centerx - centerx * .3, centery, 0, -15),
-            new Planetoid(centerx + 10, centery * 1.5, -15, 0),
-        ]);
-
-        sun = {
-            x: centerx,
-            y: centery,
-            mass: 10,
-        }
-
-        mouse = {
-            x: centerx,
-            y: centery,
-            mass: 1,
-        };
-
-        startDrawing();
+    function resize() {
+      ctx.canvas.width = window.innerWidth;
+      ctx.canvas.height = window.innerHeight;
     }
+    resize();
+
+    document.body.addEventListener("mousemove", (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener("resize", resize);
+
+    const centerx = ctx.canvas.width / 2;
+    const centery = ctx.canvas.height / 2;
+
+    planets = new Set([
+      new Planetoid(centerx * 1.3, centery, 0, 15),
+      new Planetoid(centerx - centerx * 0.3, centery, 0, -15),
+      new Planetoid(centerx + 10, centery * 1.5, -15, 0),
+    ]);
+
+    sun = {
+      x: centerx,
+      y: centery,
+      mass: 10,
+    };
+
+    mouse = {
+      x: centerx,
+      y: centery,
+      mass: 1,
+    };
+
+    startDrawing();
+  }
 }
 
 function startDrawing() {
-    prevFrameTime = Date.now();
-    drawAgain();
+  prevFrameTime = Date.now();
+  drawAgain();
 }
 
 function drawAgain() {
-    frameTime = Date.now();
-    delta = frameTime - prevFrameTime;
-    delta = Math.min(delta, 100)
-    delta /= 100;
-    window.requestAnimationFrame(draw);
-    prevFrameTime = frameTime;
+  const frameTime = Date.now();
+  delta = frameTime - prevFrameTime;
+  delta = Math.min(delta, 100);
+  delta /= 100;
+  window.requestAnimationFrame(draw);
+  prevFrameTime = frameTime;
 }
 
 function draw() {
-    // TODO:
-    // make the rest of the screen move in parallax
+  clearBackground();
 
-    clearBackground();
-
-    for (planet of planets) {
-        for (planet2 of planets) {
-            if (planet2 != planet) {
-                if (planet.distance(planet2) < 5) {
-                    planets.delete(planet);
-                    planets.delete(planet2)
-                    break;
-                }
-                planet.gravitate(planet2, delta);
-            }
+  for (const planet of planets) {
+    for (const planet2 of planets) {
+      if (planet2 != planet) {
+        if (planet.getDistance(planet2) < 5) {
+          planets.delete(planet);
+          planets.delete(planet2);
+          break;
         }
-        planet.gravitate(mouse);
-        planet.gravitate(sun);
+        planet.gravitateTowards(planet2, delta);
+      }
     }
+    planet.gravitateTowards(mouse);
+    planet.gravitateTowards(sun);
+  }
 
-    for (planet of planets) {
-        planet.move(delta);
+  for (const planet of planets) {
+    planet.move(delta);
+  }
+
+  for (const planet of planets) {
+    for (const planet2 of planets) {
+      if (planet.x === planet2.x && planet.y === planet2.y) {
+        continue;
+      }
+
+      drawGravityLine(planet, planet2);
     }
+    drawGravityLine(planet, mouse);
+  }
 
-    ctx.fillStyle = 'white';
-    for (planet of planets) {
-        ctx.beginPath();
-        ctx.arc(planet.x, planet.y, 3, 0, 2 * Math.PI);
-        ctx.fill();
-    }
-
-    ctx.fillStyle = '#f5b55b';
+  ctx.fillStyle = "#dbcbb8";
+  for (const planet of planets) {
     ctx.beginPath();
-    ctx.arc(sun.x, sun.y, 5, 0, 2 * Math.PI);
+    ctx.arc(planet.x, planet.y, 3, 0, 2 * Math.PI);
     ctx.fill();
+  }
 
-    drawAgain();
+  ctx.fillStyle = "#f5b55b";
+  ctx.beginPath();
+  ctx.arc(sun.x, sun.y, 5, 0, 2 * Math.PI);
+  ctx.fill();
+
+  drawAgain();
+}
+
+function drawGravityLine(planet1, planet2) {
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = `rgba(120, 80, 40, ${convertDistanceToOpacity(
+    planet1.getDistance(planet2)
+  )})`;
+  ctx.beginPath();
+  ctx.moveTo(planet1.x, planet1.y);
+  ctx.lineTo(planet2.x, planet2.y);
+  ctx.closePath();
+  ctx.stroke();
+}
+
+Number.prototype.map = function (in_min, in_max, out_min, out_max) {
+  return ((this - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+};
+
+function convertDistanceToOpacity(distance) {
+  if (distance > 200) {
+    return 0;
+  }
+  return distance.map(0, 200, 1, 0);
 }
 
 function clearBackground() {
-    ctx.fillStyle = 'rgba(0,0,0,.3)';
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = "rgba(0,0,0,.3)";
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
 
 function addPlanet(event) {
-    planets.add(new Planetoid(event.clientX + 3, event.clientY + 3, 20, 0))
+  planets.add(new Planetoid(event.clientX + 3, event.clientY + 3, 20, 0));
 }
 
 start();
