@@ -83,8 +83,13 @@ canvas#planets {
   animation-fill-mode: both;
   animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
 
-  .button {
+  .button:not(:hover) {
     color: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .button:hover {
+    background-color: var(--primary);
     border-color: var(--primary);
   }
 }
