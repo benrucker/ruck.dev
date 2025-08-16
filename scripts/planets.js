@@ -5,6 +5,8 @@ let planets;
 let mouse;
 let sun;
 
+const activeMouseDistance = 200;
+
 function start() {
   const planetsCanvas = document.getElementById("planets");
   if (planetsCanvas.getContext) {
@@ -76,7 +78,9 @@ function draw() {
         planet.gravitateTowards(planet2, delta);
       }
     }
-    planet.gravitateTowards(mouse);
+    if (planet.getDistance(mouse) < activeMouseDistance) {
+      planet.gravitateTowards(mouse);
+    }
     planet.gravitateTowards(sun);
   }
 
@@ -92,7 +96,9 @@ function draw() {
 
       drawGravityLine(planet, planet2);
     }
-    drawGravityLine(planet, mouse);
+    if (planet.getDistance(mouse) < activeMouseDistance) {
+      drawGravityLine(planet, mouse);
+    }
   }
 
   ctx.fillStyle = "#dbcbb8";
@@ -111,10 +117,16 @@ function draw() {
 }
 
 function drawGravityLine(planet1, planet2) {
+  const distance = planet1.getDistance(planet2);
+  const opacity = convertDistanceToOpacity(distance);
+  if (opacity > 0) {
+    drawLine(planet1, planet2, opacity);
+  }
+}
+
+function drawLine(planet1, planet2, opacity) {
   ctx.lineWidth = 3;
-  ctx.strokeStyle = `rgba(120, 80, 40, ${convertDistanceToOpacity(
-    planet1.getDistance(planet2)
-  )})`;
+  ctx.strokeStyle = `rgba(120, 80, 40, ${opacity})`;
   ctx.beginPath();
   ctx.moveTo(planet1.x, planet1.y);
   ctx.lineTo(planet2.x, planet2.y);
