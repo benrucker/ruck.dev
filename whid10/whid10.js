@@ -116,6 +116,41 @@
   })();
 
   /* ---------------------------------------------------------------------
+     Front door: the sign-in button is a prop. A click rolls the label over
+     to "Just kidding!"; the next click rolls it back. Both labels share
+     one grid cell (.conic-button__label), so this is class-only: the
+     outgoing label gets .is-out, the incoming .is-in, and once the roll
+     has finished the outgoing one is parked below again. aria-hidden
+     follows the visible label so the button's accessible name tracks it.
+     --------------------------------------------------------------------- */
+  (() => {
+    const button = document.querySelector("#front-door .conic-button");
+    if (!button) return;
+    const labels = [...button.querySelectorAll(".conic-button__text")];
+    if (labels.length < 2) return;
+    const ROLL_MS = 460; // matches the transition in the CSS
+    let current = Math.max(0, labels.findIndex((el) => el.classList.contains("is-in")));
+    let park = 0;
+
+    const parkOthers = () => {
+      labels.forEach((el, i) => i !== current && el.classList.remove("is-out"));
+    };
+    button.addEventListener("click", () => {
+      const prev = current;
+      current = (current + 1) % labels.length;
+      labels.forEach((el, i) => {
+        el.classList.toggle("is-in", i === current);
+        el.classList.toggle("is-out", i === prev);
+        if (i === current) el.removeAttribute("aria-hidden");
+        else el.setAttribute("aria-hidden", "true");
+      });
+      clearTimeout(park);
+      if (reduceMotion) parkOthers();
+      else park = setTimeout(parkOthers, ROLL_MS);
+    });
+  })();
+
+  /* ---------------------------------------------------------------------
      Messages shapes (DartingYellowCircle, PivotingRedSquare,
      ReflectingBlueTriangle). Each shape has an outer element carrying the
      committed transform and an inner element that animates one move with
@@ -300,23 +335,56 @@
      Holographic card (HolographicCard.tsx + useTicketRevealAnimation).
      Pointer tilt with 0.12 smoothing per frame, shimmer/glare follow the
      tilt. `initHolo` is reused for every .holo on the page.
+
+     The tilt target is the whole page: every card tracks the pointer
+     wherever it is in the viewport. One window listener and one rAF loop
+     are shared by all cards; the tilt is the pointer's offset from each
+     card's center, normalized so the maximum angle is reached
+     HOLO_REACH half-widths (half-heights) away and clamped there. Cards
+     off-screen are skipped. When the pointer leaves the window, or the
+     input is touch, the cards ease back to flat.
      --------------------------------------------------------------------- */
   const MAX_TILT = 10;
-  function initHolo(root) {
-    const card = root.querySelector(".holo__card");
-    const shimmer = root.querySelector(".holo__shimmer");
-    const glare = root.querySelector(".holo__glare");
-    if (!card) return;
-    let tx = 0;
-    let ty = 0;
-    let x = 0;
-    let y = 0;
-    let raf = 0;
-    let active = false;
+  const HOLO_REACH = 2; // half-card widths from center for max tilt
+  const holoCards = [];
+  const holoPointer = { x: 0, y: 0, active: false };
+  let holoRaf = 0;
+  let holoDirty = false;
+  let holoWired = false;
 
-    const frame = () => {
-      x += (tx - x) * 0.12;
-      y += (ty - y) * 0.12;
+  const clamp1 = (v) => Math.max(-1, Math.min(1, v));
+
+  // Recompute every visible card's target from the stored pointer.
+  function holoRetarget() {
+    for (const c of holoCards) {
+      if (!c.visible) continue;
+      if (!holoPointer.active) {
+        c.tx = 0;
+        c.ty = 0;
+        continue;
+      }
+      const r = c.card.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      c.tx = clamp1((holoPointer.x - cx) / (r.width / 2) / HOLO_REACH);
+      c.ty = clamp1((holoPointer.y - cy) / (r.height / 2) / HOLO_REACH);
+    }
+  }
+
+  function holoFrame() {
+    if (holoDirty) {
+      holoDirty = false;
+      holoRetarget();
+    }
+    let settled = true;
+    for (const c of holoCards) {
+      if (!c.visible) continue;
+      if (Math.abs(c.tx - c.x) < 0.001 && Math.abs(c.ty - c.y) < 0.001) continue;
+      settled = false;
+      c.x += (c.tx - c.x) * 0.12;
+      c.y += (c.ty - c.y) * 0.12;
+      const { x, y, card, shimmer, glare } = c;
       const tilt = Math.min(1, Math.hypot(x, y));
       card.style.transform = `rotateX(${(-y * MAX_TILT).toFixed(3)}deg) rotateY(${(x * MAX_TILT).toFixed(3)}deg)`;
       if (shimmer) {
@@ -328,25 +396,68 @@
       if (glare) {
         glare.style.background = `radial-gradient(circle at ${50 - x * 35}% ${50 - y * 35}%, rgba(255,255,255,0.15) 0%, transparent 45%)`;
       }
-      if (active || Math.abs(tx - x) > 0.001 || Math.abs(ty - y) > 0.001) raf = requestAnimationFrame(frame);
-      else raf = 0;
-    };
-    const kick = () => {
-      if (!raf) raf = requestAnimationFrame(frame);
-    };
-    root.addEventListener("pointermove", (ev) => {
-      const r = root.getBoundingClientRect();
-      tx = ((ev.clientX - r.left) / r.width) * 2 - 1;
-      ty = ((ev.clientY - r.top) / r.height) * 2 - 1;
-      active = true;
-      kick();
+    }
+    holoRaf = settled && !holoDirty ? 0 : requestAnimationFrame(holoFrame);
+  }
+
+  function holoKick() {
+    holoDirty = true;
+    if (!holoRaf) holoRaf = requestAnimationFrame(holoFrame);
+  }
+
+  function holoFlatten() {
+    if (!holoPointer.active) return;
+    holoPointer.active = false;
+    holoKick();
+  }
+
+  function wireHolo() {
+    if (holoWired) return;
+    holoWired = true;
+    window.addEventListener(
+      "pointermove",
+      (ev) => {
+        // Touch has no hover; keep the cards flat.
+        if (ev.pointerType === "touch") return holoFlatten();
+        holoPointer.x = ev.clientX;
+        holoPointer.y = ev.clientY;
+        holoPointer.active = true;
+        holoKick();
+      },
+      { passive: true },
+    );
+    // pointerout with no relatedTarget means the pointer left the window.
+    window.addEventListener("pointerout", (ev) => {
+      if (!ev.relatedTarget) holoFlatten();
     });
-    root.addEventListener("pointerleave", () => {
-      // The museum freezes the tilt where the pointer left.
-      active = false;
-      kick();
+    window.addEventListener("blur", holoFlatten);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) holoFlatten();
     });
-    kick();
+    // Scrolling moves the cards under a stationary pointer.
+    window.addEventListener("scroll", () => holoPointer.active && holoKick(), { passive: true });
+    window.addEventListener("resize", holoKick, { passive: true });
+  }
+
+  function initHolo(root) {
+    const card = root.querySelector(".holo__card");
+    if (!card) return;
+    const entry = {
+      card,
+      shimmer: root.querySelector(".holo__shimmer"),
+      glare: root.querySelector(".holo__glare"),
+      x: 0,
+      y: 0,
+      tx: 0,
+      ty: 0,
+      visible: false,
+    };
+    holoCards.push(entry);
+    onVisibility(card, (visible) => {
+      entry.visible = visible;
+      if (visible) holoKick();
+    });
+    wireHolo();
   }
 
   // Card enter (0→1500 ms) when scrolled into view.
@@ -579,7 +690,7 @@
     // Screen glitch: shake then rumble the chat, jitter every tile, crack the
     // glass behind the red tile and blow it up once.
     const startGlitch = (w) => {
-      chat.classList.add("screen-glitch");
+      chat?.classList.add("screen-glitch");
       wordles.forEach((x) => x.el.classList.add("is-glitching"));
       const red = w.tiles[w.redIndex];
       const c = centerIn(red, w.el);
@@ -594,7 +705,7 @@
       });
     };
     const endGlitch = () => {
-      chat.classList.remove("screen-glitch");
+      chat?.classList.remove("screen-glitch");
       wordles.forEach((x) => x.el.classList.remove("is-glitching"));
       sprites.forEach((d) => d.remove());
       sprites = [];
@@ -615,7 +726,7 @@
           lastStep = now;
           const angle = Math.random() * Math.PI * 2;
           const radius = Math.random() * eased * 10;
-          chat.style.translate = `${(Math.cos(angle) * radius).toFixed(2)}px ${(Math.sin(angle) * radius).toFixed(2)}px`;
+          if (chat) chat.style.translate = `${(Math.cos(angle) * radius).toFixed(2)}px ${(Math.sin(angle) * radius).toFixed(2)}px`;
         }
         if (progress < 1) crescendoRaf = requestAnimationFrame(tick);
       };
@@ -626,7 +737,7 @@
       crescendoRaf = 0;
       overlay?.classList.remove("is-active");
       overlay?.style.setProperty("--crescendo-progress", "0");
-      chat.style.removeProperty("translate");
+      chat?.style.removeProperty("translate");
     };
 
     // Pop: a sparse dashed outline around the message that scales in and fades.

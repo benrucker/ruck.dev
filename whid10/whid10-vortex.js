@@ -22,6 +22,71 @@ const CAMERA = {
   rotationX: THREE.MathUtils.degToRad(-13),
 };
 
+// The museum's intro fly-in (app/you/components/AnimatedIntroCamera.tsx),
+// driven by scroll through the You section's .you-scroll track instead of
+// the clock: pinned progress 0..1 maps linearly onto this timeline (ms):
+//   0 – 2800     approach: a straight line from INTRO_CAMERA.position to
+//                the sphere surface, hermiteEase(t, 0, 0.4), fov 40,
+//                looking along the line at the sphere center.
+//   2800         boundary: fog snaps INTRO_FOG_* → FOG_* (no lerp; see
+//                hooks/useIntroOrchestration.ts).
+//   2800 – 7000  descent: a straight line from the surface to
+//                CAMERA.position, smoothStop(t, 1.5); the look direction
+//                lerps from the descent direction to CAMERA's -13° pitch
+//                and fov ramps 40 → 65 with the same easing.
+//   7000 – 9400  first tarot card's entrance (config/cardAnimation.ts:
+//                2400 ms, easeOutCubic; the next card staggers 500 ms).
+//                The DOM card and copy take those two slots in whid10.css.
+// The two lines meet at the surface with a sharp kink on purpose.
+const INTRO_CAMERA = {
+  // config/cameras.ts. The museum's canvas is created with this camera and
+  // never restores CAMERA.far, so far stays 40 throughout.
+  far: 40,
+  fov: 40,
+  near: 0.01,
+  position: [0.0, 3.02, 20.281],
+};
+const INTRO_FOG_NEAR = 8.0; // config/vortex.ts
+const INTRO_FOG_FAR = 40.0;
+const APPROACH_DURATION_MS = 2800; // AnimatedIntroCamera.tsx
+const DESCENT_DURATION_MS = 4200;
+const APPROACH_V0 = 0; // hermite endpoint velocities
+const APPROACH_V1 = 0.4;
+const DESCENT_V0 = 1.5; // smoothStop start velocity
+const START_LOOK_AT = [0, 0, 0];
+const CARD_ENTRANCE_STAGGER_MS = 500; // config/cardAnimation.ts
+const CARD_ENTRANCE_DURATION_MS = 2400;
+const INTRO_DURATION_MS = APPROACH_DURATION_MS + DESCENT_DURATION_MS;
+// What the pinned scroll spans: the intro, then the card and copy
+// entrances. whid10.css's animation-range percentages are these ms over
+// TIMELINE_MS.
+const TIMELINE_MS = INTRO_DURATION_MS + CARD_ENTRANCE_STAGGER_MS + CARD_ENTRANCE_DURATION_MS;
+
+// utils/hermiteEase.ts: cubic Hermite (0,0)→(1,1) with endpoint velocities.
+function hermiteEase(t, v0, v1) {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  const h10 = t3 - 2 * t2 + t;
+  const h01 = -2 * t3 + 3 * t2;
+  const h11 = t3 - t2;
+  return h10 * v0 + h01 + h11 * v1;
+}
+
+// utils/smoothStop.ts: quartic ease with zero velocity and acceleration at t=1.
+function smoothStop(t, v0) {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  const t4 = t3 * t;
+  return (3 - v0) * t4 + (3 * v0 - 8) * t3 + (6 - 3 * v0) * t2 + v0 * t;
+}
+
+// AnimatedIntroCamera.tsx computeLookAt: the point one unit ahead of a
+// camera posed by CAMERA (rotation applied as a YXZ Euler).
+function computeLookAt(position, rotationX) {
+  const forward = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(rotationX, 0, 0, "YXZ"));
+  return new THREE.Vector3(...position).add(forward);
+}
+
 const sharedGlsl = /* glsl */ `
 float hash(vec3 p) {
   p = fract(p * 0.3183099 + 0.1);
@@ -271,9 +336,8 @@ export function mountVortex(container) {
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(CAMERA.fov, 1, CAMERA.near, CAMERA.far);
-  camera.position.set(...CAMERA.position);
-  camera.rotation.x = CAMERA.rotationX;
+  // Posed every frame by applyElapsed below.
+  const camera = new THREE.PerspectiveCamera(INTRO_CAMERA.fov, 1, INTRO_CAMERA.near, INTRO_CAMERA.far);
 
   const uniforms = {
     iTime: { value: 0 },
@@ -316,6 +380,89 @@ export function mountVortex(container) {
     ),
   );
 
+  // AnimatedIntroCamera.tsx's animState: two LineCurve3 segments, start →
+  // sphere surface (along the line to the center) → CAMERA.position.
+  const track = container.closest("[data-vortex-track]");
+  const startVec = new THREE.Vector3(...INTRO_CAMERA.position);
+  const endVec = new THREE.Vector3(...CAMERA.position);
+  const center = new THREE.Vector3(...START_LOOK_AT);
+  const approachDir = center.clone().sub(startVec).normalize();
+  const entry = center.clone().addScaledVector(approachDir, -SPHERE_RADIUS);
+  const approachLine = new THREE.LineCurve3(startVec, entry);
+  const descentLine = new THREE.LineCurve3(entry, endVec);
+  const finalForward = computeLookAt(CAMERA.position, CAMERA.rotationX).sub(endVec).normalize();
+  // Strong -Y so the descent tilts the camera down toward the final pose
+  // immediately, rather than staring forward at nothing.
+  const downDirection = endVec.clone().sub(entry).normalize();
+  const scratch = {
+    forward: new THREE.Vector3(),
+    lookAt: new THREE.Vector3(),
+    position: new THREE.Vector3(),
+  };
+
+  // AnimatedIntroCamera.tsx's useFrame body, with `elapsed` (ms into the
+  // museum's intro) supplied from scroll instead of performance.now(). The
+  // fog snap from useIntroOrchestration's onBoundaryCrossed is folded in as
+  // the branch itself, so it reverses when scrolling back up.
+  const applyElapsed = (elapsed) => {
+    if (elapsed < APPROACH_DURATION_MS) {
+      const approachT = elapsed / APPROACH_DURATION_MS;
+      const approachEased = hermiteEase(approachT, APPROACH_V0, APPROACH_V1);
+      approachLine.getPoint(approachEased, scratch.position);
+      scratch.forward.copy(approachDir);
+      camera.fov = INTRO_CAMERA.fov;
+      uniforms.uFogNear.value = INTRO_FOG_NEAR;
+      uniforms.uFogFar.value = INTRO_FOG_FAR;
+    } else {
+      const descentT = Math.min(1, (elapsed - APPROACH_DURATION_MS) / DESCENT_DURATION_MS);
+      const descentEased = smoothStop(descentT, DESCENT_V0);
+      descentLine.getPoint(descentEased, scratch.position);
+      scratch.forward.copy(downDirection).lerp(finalForward, descentEased).normalize();
+      camera.fov = THREE.MathUtils.lerp(INTRO_CAMERA.fov, CAMERA.fov, descentEased);
+      uniforms.uFogNear.value = FOG_NEAR;
+      uniforms.uFogFar.value = FOG_FAR;
+    }
+    camera.position.copy(scratch.position);
+    scratch.lookAt.copy(scratch.position).add(scratch.forward);
+    camera.lookAt(scratch.lookAt);
+    camera.updateProjectionMatrix();
+  };
+
+  // Progress through the track's pinned phase, 0..1 (0 = track top at the
+  // viewport top, 1 = track bottom at the viewport bottom). A ViewTimeline
+  // reports cover-range progress (track top entering at the bottom → track
+  // bottom leaving at the top) without a layout read; the pinned phase is
+  // the slice of that between offsets `viewport` and `track - stage`.
+  // Without ViewTimeline (Safari at the time of writing) the same number
+  // comes from the track's bounding rect. With reduced motion, or no track,
+  // the scene rests at the end of the timeline (the museum's post-intro
+  // framing).
+  const metrics = { track: 0, stage: 0, viewport: 0 };
+  const rectProgress = () => {
+    const r = track.getBoundingClientRect();
+    const span = r.height - container.clientHeight;
+    return span > 0 ? -r.top / span : 1;
+  };
+  let readProgress = () => 1;
+  if (track && !reduceMotion) {
+    readProgress = rectProgress;
+    if ("ViewTimeline" in window) {
+      try {
+        const timeline = new ViewTimeline({ subject: track, axis: "block" });
+        readProgress = () => {
+          const t = timeline.currentTime;
+          const pct = t == null ? NaN : typeof t === "number" ? t : t.value;
+          const span = metrics.track - metrics.stage;
+          if (!Number.isFinite(pct) || span <= 0) return rectProgress();
+          const cover = (pct / 100) * (metrics.track + metrics.viewport);
+          return (cover - metrics.viewport) / span;
+        };
+      } catch {
+        /* keep the rect math */
+      }
+    }
+  }
+
   const resize = () => {
     const w = Math.max(1, container.clientWidth);
     const h = Math.max(1, container.clientHeight);
@@ -328,11 +475,18 @@ export function mountVortex(container) {
       Math.max(1, Math.floor(buffer.x / VORTEX_PIXEL_SIZE)),
       Math.max(1, Math.floor(buffer.y / VORTEX_PIXEL_SIZE)),
     );
+    metrics.stage = h;
+    metrics.track = track ? track.offsetHeight : 0;
+    metrics.viewport = document.documentElement.clientHeight;
+    // Paused (off-screen or reduced motion): setSize blanked the canvas,
+    // so put one frame back.
+    if (!running) draw();
   };
 
   const clock = new THREE.Clock();
   const draw = () => {
     uniforms.iTime.value = clock.getElapsedTime();
+    applyElapsed(Math.min(1, Math.max(0, readProgress())) * TIMELINE_MS);
     camera.layers.set(SPHERE_LAYER);
     renderer.setRenderTarget(renderTarget);
     renderer.clear();
@@ -356,8 +510,7 @@ export function mountVortex(container) {
   };
 
   new ResizeObserver(resize).observe(container);
-  resize();
-  draw();
+  resize(); // draws the first frame too (running is still false)
 
   if (reduceMotion) return;
   new IntersectionObserver(

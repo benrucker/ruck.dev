@@ -666,16 +666,32 @@ canvas {
 }
 
 /* Placeholder prose blocks. Remove once real writing lands. */
+/* Placeholder slots. The bracketed text is copied from the blog draft. */
 .todo {
   border: 1px dashed var(--border);
   border-radius: var(--radius);
   padding: 0.75em 1em;
   color: var(--muted-foreground);
+  font-family: var(--font-accent);
   font-size: 0.9em;
 }
-.todo::before {
-  content: "[write] ";
-  font-family: var(--font-accent);
+
+/* Epilogue: the dev-stack takeaways screenshot */
+.blog-figure {
+  margin: 1.5rem 0;
+}
+.blog-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.hot-takes {
+  margin: 1rem 0 0;
+}
+.hot-takes img {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius);
 }
 
 /* Type specimen. Verifies every theme's three font roles render. Delete
@@ -975,6 +991,39 @@ canvas {
   margin-right: 0.4em;
   fill: currentColor;
 }
+/* The sign-in label is a prop: a click rolls it over to "Just kidding!" and
+   back. Both labels sit in the same grid cell, so the cell (and with it the
+   button) is always sized by the wider label and neither state can reflow.
+   The roll itself is opacity + translate only, clipped to the line box so
+   the outgoing label leaves through the top while the next rises from
+   below. Idle labels wait below with no transition, so un-parking them is
+   an invisible snap rather than a pass through the middle. */
+.conic-button__label {
+  display: inline-grid;
+  vertical-align: baseline;
+  text-align: center;
+  clip-path: inset(0 -0.3em);
+}
+/* Both labels ride one drum: same distance, same duration, same curve, so
+   the outgoing line leaves at exactly the rate the incoming one arrives. */
+.conic-button__text {
+  grid-area: 1 / 1;
+  translate: 0 110%;
+}
+.conic-button__text.is-in {
+  translate: 0 0;
+  transition: translate 460ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.conic-button__text.is-out {
+  translate: 0 -110%;
+  transition: translate 460ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .conic-button__text.is-in,
+  .conic-button__text.is-out {
+    transition: none;
+  }
+}
 
 /* --------------------------------------------------------------------------
    Messages: bordered title card, three primary shapes that dart, pivot and
@@ -991,31 +1040,6 @@ canvas {
   margin-bottom: 6rem;
 }
 
-.messages-card {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: min(22.5rem, calc(100% - 2rem));
-  height: 20.25rem;
-  border: 2px solid var(--foreground);
-  background: var(--background);
-  padding: 1.75rem 2.25rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.messages-card__eyebrow {
-  margin: 0 0 0.5rem;
-}
-.messages-card__title {
-  font-size: 3.75rem;
-  line-height: 1;
-  margin: 0 0 1rem;
-}
-.messages-card__sub {
-  margin: 0;
-}
 .shape {
   position: absolute;
   transform-origin: 0 0;
@@ -1582,8 +1606,7 @@ canvas {
 }
 
 /* --------------------------------------------------------------------------
-   Gamers: spotlight vignette with noise, gold/wood frames and placards,
-   folded-corner letter, staggered reveal, scroll-snap strip
+   Gamers: spotlight vignette with noise, cinema bars
    (gamers/*.module.scss)
    -------------------------------------------------------------------------- */
 [data-theme="gamers"].exhibit {
@@ -1637,110 +1660,6 @@ canvas {
   display: block;
   font-weight: normal;
   color: var(--primary);
-}
-
-.gallery-strip {
-  display: flex;
-  gap: 2rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 2rem 1.5rem;
-  scrollbar-width: thin;
-}
-.station {
-  flex: 0 0 min(100% - 3rem, 26rem);
-  scroll-snap-align: center;
-  display: grid;
-  gap: 0.75rem;
-}
-.frame {
-  border-style: solid;
-  border-width: 20px;
-  border-image: url("assets/gamers/gold-square-frame.svg") 27 stretch;
-  aspect-ratio: 4 / 3;
-  background: var(--gamers-surface);
-  display: grid;
-  place-items: center;
-  color: var(--gamers-text-muted);
-  font-family: var(--font-accent);
-  overflow: hidden;
-}
-.frame > img,
-.frame > video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.frame--gold2 {
-  border-image-source: url("assets/gamers/gold-square-frame-2.svg");
-}
-.frame--wood {
-  border-image-source: url("assets/gamers/wood-ish-frame.svg");
-}
-.placard {
-  margin: 0 auto;
-  width: fit-content;
-  padding: 0.45rem 1.25rem;
-  text-align: center;
-  font-size: 0.9em;
-  background: linear-gradient(
-    180deg,
-    var(--gamers-gold-frame-start) 0%,
-    color-mix(in oklab, var(--gamers-gold-frame-start), var(--gamers-gold-frame-end) 50%) 60%,
-    var(--gamers-gold-frame-end) 100%
-  );
-  border-top: 1px solid rgba(199, 158, 79, 0.45);
-  box-shadow:
-    inset 0 1px 0 rgba(229, 196, 125, 0.12),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
-  color: var(--gamers-gold-text);
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.9);
-}
-.placard--wood {
-  background: linear-gradient(
-    180deg,
-    var(--gamers-wood-frame-start) 0%,
-    color-mix(in oklab, var(--gamers-wood-frame-start), var(--gamers-wood-frame-end) 50%) 60%,
-    var(--gamers-wood-frame-end) 100%
-  );
-  border-top: 1px solid rgba(160, 90, 44, 0.55);
-  box-shadow:
-    inset 0 1px 0 rgba(200, 113, 55, 0.15),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
-  color: var(--gamers-wood-text);
-}
-
-.folded-corner {
-  position: relative;
-  padding: 1em 1.5em;
-  color: #444;
-  background: #fff;
-  overflow: hidden;
-  width: min(100%, 34rem);
-  margin: 2rem auto;
-}
-.folded-corner::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: block;
-  width: 0;
-  border-width: 0 20px 20px 0;
-  border-style: solid;
-  border-color: #1c1917 #1c1917 #ccc #ccc;
-  background: #fff;
-}
-.folded-corner p {
-  color: inherit;
-}
-
-.reveal-group > * {
-  opacity: 0;
-  transition: opacity 1500ms ease-in-out;
-}
-.reveal-group.is-in > * {
-  opacity: 1;
 }
 
 /* --------------------------------------------------------------------------
@@ -1956,8 +1875,8 @@ canvas {
 }
 
 /* --------------------------------------------------------------------------
-   Dub: projected title card (gate weave + flicker), film strip, grain and
-   speckle overlays, quote projections (dub/components/*)
+   Dub: projected letter (gate weave + flicker) on the film strip backdrop,
+   grain and speckle overlays, quote projections (dub/components/*)
    -------------------------------------------------------------------------- */
 [data-theme="dub"].exhibit {
   position: relative;
@@ -1997,16 +1916,17 @@ canvas {
   position: absolute;
   inset: 0;
   background-image: url("assets/dub/speckle-sprite.png");
+  /* No stitchTiles on the speckle, so it repeats on y only; sections wider
+     than the 1920px sprite clip its right edge (same as the museum). */
   background-repeat: repeat-y;
-  background-position: center 0;
   animation: speckle-cycle 3s steps(30) infinite;
 }
 @keyframes speckle-cycle {
   from {
-    background-position: center 0;
+    background-position: 0 0;
   }
   to {
-    background-position: center -32400px;
+    background-position: 0 -32400px;
   }
 }
 
@@ -2022,6 +1942,9 @@ canvas {
   background: var(--primary);
   pointer-events: none;
   animation: projectionFlicker 3s ease-in-out infinite;
+}
+.projected--subtle {
+  animation-name: filmGateWeaveSubtle, filmGateWeaveSubtle;
 }
 .projected--subtle .projected__bg {
   animation-name: projectionFlickerSubtle;
@@ -2058,6 +1981,34 @@ canvas {
   96% { transform: translate(-0.1px, 0.1px); }
   100% { transform: translate(0, 0); }
 }
+@keyframes filmGateWeaveSubtle {
+  0% { transform: translate(0, 0); }
+  4% { transform: translate(0.05px, -0.7px); }
+  8% { transform: translate(-0.05px, 0.15px); }
+  12% { transform: translate(0, -0.1px); }
+  16% { transform: translate(0.1px, 0.3px); }
+  20% { transform: translate(-0.05px, -0.55px); }
+  24% { transform: translate(0, 0.05px); }
+  28% { transform: translate(0.05px, -0.2px); }
+  32% { transform: translate(0, 0.4px); }
+  36% { transform: translate(-0.1px, -0.3px); }
+  40% { transform: translate(0, 0); }
+  44% { transform: translate(0.05px, -0.8px); }
+  48% { transform: translate(0, 0.2px); }
+  52% { transform: translate(-0.05px, -0.15px); }
+  56% { transform: translate(0, 0.45px); }
+  60% { transform: translate(0.05px, -0.35px); }
+  64% { transform: translate(0, 0.1px); }
+  68% { transform: translate(-0.05px, -0.6px); }
+  72% { transform: translate(0.1px, 0.25px); }
+  76% { transform: translate(0, -0.05px); }
+  80% { transform: translate(-0.05px, 0.35px); }
+  84% { transform: translate(0, -0.45px); }
+  88% { transform: translate(0.05px, 0.15px); }
+  92% { transform: translate(0, -0.25px); }
+  96% { transform: translate(-0.05px, 0.05px); }
+  100% { transform: translate(0, 0); }
+}
 @keyframes projectionFlicker {
   0%, 100% { opacity: 0.88; filter: blur(12px) brightness(1); }
   15% { opacity: 0.92; filter: blur(14px) brightness(1.02); }
@@ -2073,50 +2024,125 @@ canvas {
   80% { opacity: 0.895; filter: blur(8px) brightness(0.995); }
 }
 
+/* JacksonLetterSection: a full-width subtle Projected. Its bg is the
+   FilmStripBackdrop painted --secondary (taupe), scale-x-110 and -rotate-2,
+   then blurred 7-8.5px by projectionFlickerSubtle so the strip's edges fall
+   off like a projector beam. The letter grid rides on top, -rotate-[1.5deg].
+   The wrapper is `overflow-x-clip pt-10`; the strip is wider than the
+   section, so clip x only and let the tilted corners poke out vertically. */
+.dub-letter-wrap {
+  margin: 0 -1.5rem; /* full bleed past .exhibit's side padding */
+  padding-top: 2.5rem;
+  overflow: clip visible;
+}
+.dub-letter {
+  width: 100%;
+}
+.dub-letter__bg {
+  background: var(--secondary);
+  rotate: -2deg;
+  scale: 1.1 1;
+}
+
+/* FilmStripBackdrop: `h-full py-10` around a `grid h-full grid-cols-[1fr]
+   gap-4 border-40 p-4 md:grid-cols-[1fr_80vw_1fr] md:gap-10 md:border-80
+   md:p-10` with `border-style: dashed none`. The dashed top and bottom
+   borders are the sprocket holes (cream dashes over the taupe bg); the
+   three cells are the cream frames, the middle one 80vw wide. */
 .film-strip-wrap {
+  height: 100%;
   padding: 2.5rem 0;
 }
 .film-strip {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
+  height: 100%;
   padding: 1rem;
   border: 40px dashed var(--foreground);
   border-inline-style: none;
 }
 @media (min-width: 48rem) {
   .film-strip {
-    grid-template-columns: 1fr minmax(0, 80vw) 1fr;
+    grid-template-columns: 1fr 80vw 1fr;
     gap: 2.5rem;
     padding: 2.5rem;
     border-width: 80px;
   }
 }
-.film-strip__rail {
+.film-strip__frame {
+  height: 100%;
   background: var(--foreground);
   border-radius: 1.5rem;
-  min-height: 2rem;
-}
-.film-strip__cell {
-  display: grid;
-  place-items: center;
-  min-width: 0;
 }
 
-.dub-title {
-  padding: 2.5rem 3rem;
-  text-align: center;
-  font-family: var(--font-header);
+/* Projected children: `flex min-h-[120vh] items-center justify-center`,
+   then `grid grid-cols-1 p-4 md:grid-cols-[1fr_80vw_1fr] md:gap-10 md:px-10
+   md:py-20` with an empty first column, then `grid grid-cols-1 items-center
+   gap-8 md:grid-cols-[auto_1fr] md:gap-10` holding the avatar and letter. */
+.dub-letter__content {
+  display: flex;
+  min-height: 120vh;
+  align-items: center;
+  justify-content: center;
 }
-.dub-title__eyebrow {
-  margin: 0 0 0.5rem;
-  font-family: var(--font-accent);
+.dub-letter__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 1rem;
 }
-.dub-title h2 {
-  margin: 0;
-  font-size: clamp(3rem, 10vw, 5rem);
-  font-weight: 500;
-  line-height: 1;
+.dub-letter__spacer {
+  display: none;
+}
+.dub-letter__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 2rem;
+}
+@media (min-width: 48rem) {
+  .dub-letter__grid {
+    grid-template-columns: 1fr 80vw 1fr;
+    gap: 2.5rem;
+    padding: 5rem 2.5rem;
+  }
+  .dub-letter__spacer {
+    display: block;
+  }
+  .dub-letter__body {
+    grid-template-columns: auto 1fr;
+    gap: 2.5rem;
+  }
+}
+/* Where the museum has the member's avatar (`size-32 md:size-40
+   rounded-full` in a `-rotate-2 blur-[2px]` wrapper): an empty disc that
+   keeps the composition without pretending to be one. */
+.dub-letter__avatar {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  justify-self: center;
+  background: var(--primary-foreground);
+  opacity: 0.12;
+  rotate: -2deg;
+  filter: blur(2px);
+}
+@media (min-width: 48rem) {
+  .dub-letter__avatar {
+    width: 10rem;
+    height: 10rem;
+  }
+}
+/* blockquote `flex -rotate-[1.5deg] items-center`; the museum sets the
+   letters in <i>, and its dub theme drops the last paragraph's margin. */
+.dub-letter__text {
+  display: flex;
+  align-items: center;
+  rotate: -1.5deg;
+  font-style: italic;
+}
+.dub-letter__text p:last-child {
+  margin-bottom: 0;
 }
 
 .quote-grid {
@@ -2144,168 +2170,9 @@ canvas {
 }
 
 /* --------------------------------------------------------------------------
-   Lowlights: awards-show hero, limo, body column, cardboard box, speech
-   bubbles, wiggle / vibrate / funk (lowlights/*.module.scss)
+   Lowlights: the cardboard diorama (lowlights/*.module.scss)
    -------------------------------------------------------------------------- */
-.ll-stage {
-  overflow: visible;
-  padding-top: 1rem;
-}
-.ll-card {
-  position: relative;
-  z-index: 2;
-  width: min(25rem, calc(100% - 2rem));
-  height: 17.5rem;
-  margin-inline: auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  border: 8px solid var(--primary-foreground);
-  background: var(--primary) url("assets/lowlights/gradient.webp") top / 100vw 100vh;
-  background-blend-mode: screen;
-  color: var(--primary-foreground);
-  font-family: "Footlight MT Light", var(--font-header), serif;
-  padding: 0.75rem 1rem;
-  animation: wiggle 5s ease-in-out infinite;
-}
-.ll-card__exhibit {
-  grid-area: 1 / 1;
-  color: #fff;
-  margin: 0;
-}
-.ll-card__title {
-  grid-area: 2 / 1 / 3 / 4;
-  align-self: center;
-  text-align: center;
-  margin: 0;
-  font-size: 3rem;
-  font-weight: normal;
-  font-family: inherit;
-  letter-spacing: 0.02em;
-}
-.ll-card__tag {
-  grid-area: 3 / 2 / 4 / 4;
-  align-self: end;
-  text-align: right;
-  color: #fff;
-  font-size: 0.875rem;
-  margin: 0;
-}
-.ll-limo {
-  position: relative;
-  z-index: 2;
-  width: min(100%, 36rem);
-  margin: 0 auto -5rem;
-  animation: vibrate 0.1s linear infinite;
-}
-.ll-body {
-  position: relative;
-  z-index: 1;
-  width: min(100%, 44rem);
-  margin: 0 auto;
-  padding: 7rem 1.5rem 3rem;
-  border-inline: 4px solid var(--accent);
-  background: var(--accent-foreground);
-  color: var(--lowlights-cream);
-  font-size: 1.125rem;
-  text-align: center;
-}
-.ll-body .todo {
-  color: var(--lowlights-cream);
-  border-color: rgba(255, 255, 255, 0.35);
-  text-align: left;
-}
-.ll-logo {
-  width: min(100%, 22rem);
-  margin: 0 auto 2rem;
-}
 
-.ll-link {
-  display: grid;
-  justify-items: center;
-  gap: 2.5rem;
-  padding: 2rem 0 1rem;
-}
-.bubble-top {
-  position: relative;
-  background: #fff;
-  color: #1f2937;
-  padding: 0.5rem 0.75rem;
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
-  animation:
-    rectangleFunk 3s steps(1, jump-end) infinite,
-    popIn 200ms ease-out;
-}
-.bubble-top::after {
-  --size: 18px;
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border: calc(var(--size) * 2) solid transparent;
-  border-top-color: #fff;
-  border-bottom: 0;
-  border-left: 0;
-  margin-left: calc(var(--size) * -1);
-  margin-bottom: calc(var(--size) * -2);
-}
-.ll-box {
-  width: min(60%, 18rem);
-  animation: breathe 3s ease-in-out infinite;
-}
-.dumpy {
-  display: flex;
-  align-items: center;
-  gap: 2.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 2rem 0;
-}
-.dumpy__figure {
-  width: 200px;
-  height: 200px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--lowlights-gold);
-  color: var(--lowlights-deep-crimson);
-  font-family: var(--font-header);
-  animation:
-    breathe 3s ease-in-out infinite,
-    vibrate 0.1s linear infinite;
-}
-.bubble-right {
-  position: relative;
-  min-height: 3.5rem;
-  min-width: 16rem;
-  max-width: 20rem;
-  background: #fff;
-  color: #1f2937;
-  padding: 0.5rem;
-  animation: rectangleFunk 3s steps(1, jump-end) infinite;
-}
-.bubble-right.is-pop {
-  animation:
-    rectangleFunk 3s steps(1, jump-end) infinite,
-    popIn 200ms ease-out;
-}
-.bubble-right::after {
-  --size: 16px;
-  content: "";
-  position: absolute;
-  left: 1px;
-  top: 50%;
-  width: 0;
-  height: 0;
-  border: calc(var(--size) * 2) solid transparent;
-  border-right-color: #fff;
-  border-left: 0;
-  border-top: 0;
-  margin-top: -16px;
-  margin-left: -32px;
-}
 @keyframes wiggle {
   0%,
   100% {
@@ -2322,38 +2189,6 @@ canvas {
   }
   50% {
     transform: translateX(-1px);
-  }
-}
-@keyframes rectangleFunk {
-  0%,
-  100% {
-    transform: skew(3deg) perspective(25cm) rotateY(-3deg) rotateZ(-1deg);
-  }
-  33% {
-    transform: skew(-10deg) perspective(8cm) rotateY(4deg) rotateZ(1.5deg);
-  }
-  66% {
-    transform: skew(7deg) perspective(2cm) rotateY(-2deg) rotateZ(1deg);
-  }
-}
-@keyframes popIn {
-  0% {
-    scale: 1;
-  }
-  40% {
-    scale: 1.07;
-  }
-  100% {
-    scale: 1;
-  }
-}
-@keyframes breathe {
-  0%,
-  100% {
-    scale: 1;
-  }
-  50% {
-    scale: 1.03;
   }
 }
 @keyframes swingYFrames {
@@ -2405,36 +2240,8 @@ canvas {
     linear-gradient(90deg, rgba(128, 128, 128, 0.5) 0%, rgba(128, 128, 128, 0.5) 100%),
     url("assets/lowlights/cardboard-background-1.webp") center / cover no-repeat;
   background-blend-mode: overlay;
-  cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
-}
-.diorama__content {
-  position: relative;
-  z-index: 1;
-  height: 100%;
-  padding: 10rem 8rem 3rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: center;
-  gap: 3rem 4rem;
-}
-.diorama__title {
-  margin: 0;
-  color: #fff;
-  font-size: 3rem;
-  font-weight: 700;
-  font-style: italic;
-  font-family: var(--font-header);
-  text-align: center;
-}
-.funky {
-  animation: rectangleFunk 3s steps(1, jump-end) infinite;
-}
-.diorama .dumpy {
-  margin: 0;
-  flex-wrap: nowrap;
 }
 .diorama__curtain {
   position: absolute;
@@ -2485,20 +2292,32 @@ canvas {
   .diorama__spotlight {
     display: none;
   }
-  .diorama__content {
-    padding: 3rem 1.5rem;
-  }
-  .diorama__title {
-    font-size: 2rem;
-  }
 }
 
 /* --------------------------------------------------------------------------
    You: live pixelated vortex sphere (whid10-vortex.js), recording slot,
    one tilting card
+
+   Scroll-locked camera: .you-scroll is a 350vh track and .you-stage pins
+   inside it for the middle 250vh. whid10-vortex.js reads how far the page
+   has scrolled through the track and flies the camera from far outside the
+   sphere to the backdrop framing inside it. The card (.you-media) and copy
+   (.you-copy) sit on top of the pinned stage and fade in over the last
+   stretch via a named view timeline on the track (see @supports below).
    -------------------------------------------------------------------------- */
+#you.exhibit {
+  padding-block-start: 0;
+}
+.you-scroll {
+  height: 350vh;
+  /* Full-bleed inside .exhibit's side padding. */
+  margin-inline: -1.5rem;
+}
 .you-stage {
-  height: min(80vh, 720px);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  margin: 0;
   background: var(--background);
   display: grid;
   place-items: center;
@@ -2526,16 +2345,55 @@ canvas {
   font-size: 1.5rem;
   margin: 0;
 }
+/* The layer over the pinned stage: card, then copy; side by side from
+   48rem. Scrolls within itself only if a short viewport can't fit both. */
+.you-reveal {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 64rem);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: clamp(1rem, 4vh, 3rem) 1.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem 3rem;
+  align-items: center;
+  justify-items: center;
+}
 .you-media {
   display: grid;
-  gap: 2rem;
-  grid-template-columns: 1fr;
-  align-items: center;
-  margin-block: 2rem;
+  justify-items: center;
+  width: 100%;
+}
+.you-copy {
+  width: 100%;
+  max-width: 44ch;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--background) 62%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+.you-copy p:last-child {
+  margin-bottom: 0;
+}
+@media (max-width: 47.99rem) {
+  .you-copy {
+    font-size: 0.85em;
+  }
 }
 @media (min-width: 48rem) {
+  .you-reveal {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    justify-items: stretch;
+  }
   .you-media {
-    grid-template-columns: 2fr 1fr;
+    justify-items: end;
+  }
+  .you-copy {
+    justify-self: start;
   }
 }
 .you-recording {
@@ -2553,11 +2411,19 @@ canvas {
   perspective: 800px;
 }
 .holo--card .holo__card {
-  width: min(220px, 100%);
+  /* Capped by viewport height so card + copy fit the pinned stage:
+     the 2/3.5 aspect makes 34vh wide ≈ 60vh tall. */
+  width: min(220px, 34vh, 100%);
   aspect-ratio: 2 / 3.5;
   border-radius: 12px;
   background: linear-gradient(160deg, #2a1745, #0d0712);
   border: 1px solid var(--border);
+}
+@media (max-width: 47.99rem) {
+  .holo--card .holo__card {
+    /* Stacked above the copy: ≈ 32vh tall. */
+    width: min(150px, 18vh, 100%);
+  }
 }
 .holo--card .holo__content {
   height: 100%;
@@ -2567,6 +2433,88 @@ canvas {
   font-style: normal;
   font-size: 1.5rem;
   color: var(--primary);
+}
+
+/* Card slides in from the left and copy from the right once the museum's
+   intro fly-in has landed. `contain` on a subject taller than the
+   scrollport is exactly the span during which the subject fully covers it,
+   i.e. the pinned phase (0% = track top at viewport top, 100% = track
+   bottom at viewport bottom), which whid10-vortex.js maps linearly onto
+   the museum timeline: 7000 ms intro, then the tarot cards' entrance
+   (config/cardAnimation.ts: 2400 ms each, easeOutCubic, 500 ms stagger),
+   9900 ms in all. The card takes the first card's slot (7000–9400 ms =
+   70.71%–94.95%) and the copy the second's (7500–9900 ms = 75.76%–100%).
+   The 33.33% opacity keyframe is TarotCard.tsx's min(1, eased * 3).
+   Without support the two are simply visible. */
+@supports (animation-timeline: scroll()) {
+  .you-scroll {
+    view-timeline: --you-track block;
+  }
+  .you-media,
+  .you-copy {
+    animation-timeline: --you-track;
+    animation-fill-mode: both;
+    /* easeOutCubic */
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .you-media {
+    animation-name: you-card-in;
+    animation-range: contain 70.71% contain 94.95%;
+  }
+  .you-copy {
+    animation-name: you-copy-in;
+    animation-range: contain 75.76% contain 100%;
+  }
+}
+@keyframes you-card-in {
+  from {
+    opacity: 0;
+    translate: -3rem 0;
+    scale: 0;
+  }
+  33.33% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+@keyframes you-copy-in {
+  from {
+    opacity: 0;
+    translate: 3rem 0;
+  }
+  33.33% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Reduced motion: no pin, no scroll drive (the vortex is a single static
+   frame at the backdrop framing); card and copy show immediately and the
+   section keeps a normal height. */
+@media (prefers-reduced-motion: reduce) {
+  .you-scroll {
+    height: auto;
+  }
+  .you-stage {
+    position: static;
+    height: auto;
+    min-height: min(80vh, 720px);
+  }
+  .you-reveal {
+    max-height: none;
+    overflow: visible;
+  }
+  .you-media,
+  .you-copy {
+    animation: none;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -2581,13 +2529,6 @@ canvas {
   .projected__bg,
   .film-grain__noise,
   .film-grain__speckle,
-  .ll-card,
-  .ll-limo,
-  .bubble-top,
-  .bubble-right,
-  .ll-box,
-  .dumpy__figure,
-  .diorama__title,
   .diorama__curtain,
   .diorama__valance,
   .is-glitching .wtile,
@@ -2596,8 +2537,17 @@ canvas {
   }
   .shape__inner,
   .bot-msg,
-  .wtile,
-  .reveal-group > * {
+  .wtile {
     transition: none;
+  }
+  /* The projector blur lives in the flicker keyframes; hold one frame of
+     it so the beam edges stay soft with the flicker off. */
+  .projected__bg {
+    opacity: 0.88;
+    filter: blur(12px);
+  }
+  .projected--subtle .projected__bg {
+    opacity: 0.9;
+    filter: blur(8px);
   }
 }

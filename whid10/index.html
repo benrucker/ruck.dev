@@ -3,13 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>whid10 | the whid 10-year anniversary museum | Ben Rucker</title>
-  <meta name="description" content="An anonymized walkthrough of the whid 10-year anniversary museum: nine exhibits, nine design systems, one Discord server's decade." />
   <link rel="shortcut icon" type="image/webp" href="../smol.webp" />
 
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="whid10: the whid 10-year anniversary museum" />
-  <meta property="og:description" content="An anonymized walkthrough of a personalized, members-only web museum." />
   <meta property="og:url" content="https://ruck.dev/whid10/" />
   <meta property="og:image" content="https://ruck.dev/big.jpg" />
 
@@ -33,27 +29,11 @@
 </head>
 
 <body>
-  <nav class="stamp-nav" aria-label="Exhibits">
-    <a href="#front-door">Front door</a>
-    <a href="#messages">1 Messages</a>
-    <a href="#ticket">Ticket</a>
-    <a href="#bots">2 Bots</a>
-    <a href="#gamers">3 Gamers</a>
-    <a href="#oc">4 OC</a>
-    <a href="#dub">5 Dub</a>
-    <a href="#lowlights">6 Lowlights</a>
-    <a href="#you">7 You</a>
-    <a href="#gift-shop">Gift shop</a>
-    <a href="#behind-the-scenes">Behind the scenes</a>
-    <a href="#thank-you">Thank you</a>
-  </nav>
-
   <!-- ================================================================
        0. Front door (login theme)
        ================================================================ -->
   <section id="front-door" class="exhibit" data-theme="login">
     <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">ruck.dev / whid10</p>
 
       <!-- HomepageSignedOut: animated logo (conic outline; every few seconds
            it drops out of frame and the exhibit logos rise into its place in
@@ -82,10 +62,8 @@
           <img class="whid-logo__alt is-hidden" src="assets/logos/bots.svg" alt="" aria-hidden="true" />
         </div>
 
-        <h1 class="exhibit__title gradient-text">Hi! Welcome to whid, the whid 10-year anniversary museum.</h1>
-
-        <button class="conic-button" type="button" title="The real button signs you in with Discord. This one is a prop.">
-          <svg class="conic-button__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 5.3A17 17 0 0 0 15.4 4l-.2.4a15 15 0 0 1 3.7 1.9 13.7 13.7 0 0 0-13.8 0A15 15 0 0 1 8.8 4.4L8.6 4a17 17 0 0 0-4.2 1.3C1.7 9.3 1 13.2 1.4 17a17 17 0 0 0 5.2 2.6l1.1-1.8a11 11 0 0 1-1.8-.9l.4-.3a12.2 12.2 0 0 0 11.4 0l.4.3-1.8.9 1.1 1.8A17 17 0 0 0 22.6 17c.5-4.4-.8-8.3-3-11.7ZM8.7 14.7c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Zm6.6 0c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Z"/></svg>Sign in with Discord
+        <button class="conic-button" type="button">
+          <svg class="conic-button__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 5.3A17 17 0 0 0 15.4 4l-.2.4a15 15 0 0 1 3.7 1.9 13.7 13.7 0 0 0-13.8 0A15 15 0 0 1 8.8 4.4L8.6 4a17 17 0 0 0-4.2 1.3C1.7 9.3 1 13.2 1.4 17a17 17 0 0 0 5.2 2.6l1.1-1.8a11 11 0 0 1-1.8-.9l.4-.3a12.2 12.2 0 0 0 11.4 0l.4.3-1.8.9 1.1 1.8A17 17 0 0 0 22.6 17c.5-4.4-.8-8.3-3-11.7ZM8.7 14.7c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Zm6.6 0c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Z"/></svg><span class="conic-button__label"><span class="conic-button__text is-in">Sign in with Discord</span><span class="conic-button__text" aria-hidden="true">Just kidding!</span></span>
         </button>
       </div>
 
@@ -93,11 +71,13 @@
         <span class="font-header"><em>Header: Gibson italic</em></span>
         <span class="font-text">Body: Gibson upright, 18px</span>
         <span class="font-accent">Accent: Filmotype Yukon</span>
-        <small>data-theme="login"</small>
       </div>
 
-      <p class="todo">What whid is. What the museum is. Why it required login, and therefore why this page is dataless.</p>
-      <p class="todo">Your role in one line. Team size. Timeline: Oct 2025 to Apr 2026 build, public launch 26 Apr 2026.</p>
+      <p>Hey! This page documents a project I made for my friends celebrating the 10-year anniversary of creating our Discord server (it's silly, I know, but I've known these peeps since forever).</p>
+      <p>We created a museum, each exhibit showcasing a different aspect of our time together: the messages we've sent, games we've played, music we've written, etc etc.</p>
+      <p>To make this site extra special, I decided that we could make each exhibit have a totally different visual style. This exploded the scope, but ended up rewarding. I'm happy with all the distinct designs we came up with.</p>
+      <p>Going through the experience chronologically: each user has to sign in. People's messages were included in the final page, so to respect their privacy, the actual page is not publicly accessible.</p>
+      <p>Authentication is handled via Discord social sign-in integrated into NextAuth.</p>
     </div>
   </section>
 
@@ -105,10 +85,6 @@
        1. Messages
        ================================================================ -->
   <section id="messages" class="exhibit" data-theme="messages">
-    <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Exhibit 1</p>
-      <h1 class="exhibit__title">Messages!</h1>
-    </div>
 
     <!-- messages/page.tsx hero: title card and the three primary shapes
          (the collage behind the card is left to the screenshot). Move the
@@ -125,12 +101,6 @@
           </filter>
         </defs>
       </svg>
-
-      <div class="messages-card">
-        <p class="messages-card__eyebrow">Exhibit 1</p>
-        <h2 class="messages-card__title">Messages!</h2>
-        <p class="messages-card__sub">Or: how I learned to stop worrying and love talking anyway</p>
-      </div>
 
       <!-- ReflectingBlueTriangle -->
       <div class="shape shape--triangle" aria-hidden="true">
@@ -153,19 +123,19 @@
         </div>
       </div>
     </div>
-    <p class="stage-note">Hover a shape. The circle darts, the square pivots on a corner, the triangle reflects across a side.</p>
 
     <div class="exhibit__inner">
       <div class="specimen">
         <span class="font-header"><em>Header: RL Horizon italic</em></span>
         <span class="font-text">Body: RL Horizon upright, 18px</span>
         <span class="font-accent">Accent: RL Horizon</span>
-        <small>data-theme="messages"</small>
       </div>
 
-      <p class="todo">Exhibit concept: the server's message history as a time capsule.</p>
-      <p class="todo">What was built: stat cards, member-count and messages-per-year graphs, the roleup card.</p>
-      <p class="todo">Illustration: a scrubbed screenshot of one stat card and one graph.</p>
+      <p>We start off with the basic stats: messages per year, how many messages you sent, and things like that.</p>
+      <p>Some charts are built dynamically, but dead-simple ones were hard-coded using regular CSS once we had the final data.</p>
+      <p class="todo">[screenshot of messages per year]</p>
+      <p>There's secondary motion on this page: hover over the shapes in the background!</p>
+      <p>The stats were generated via Python in Marimo notebooks using pandas. Using notebooks for data pipelines is a bit strange, but it makes it really easy to debug issues mid-transform; just print the table in that cell!</p>
     </div>
   </section>
 
@@ -174,13 +144,11 @@
        ================================================================ -->
   <section id="ticket" class="exhibit" data-theme="default">
     <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Your ticket</p>
-      <h1 class="exhibit__title">One down.</h1>
 
       <!-- ExhibitCompletion: holographic card, pointer tilt, stamp drop on click. -->
       <div class="ticket-stage">
         <div class="holo">
-          <div class="holo__card" data-enter="pending" style="--holo-mask: url('assets/ticket/holographic-mask.webp')" role="button" tabindex="0" aria-label="Your ticket. Click to stamp it.">
+          <div class="holo__card" data-enter="pending" style="--holo-mask: url('assets/ticket/holographic-mask.webp')" role="button" tabindex="0">
             <div class="holo__content">
               <img src="assets/ticket/ticket.svg" alt="whid10 museum ticket" data-ticket data-name="Member" />
               <img class="ticket-stamp" src="assets/stamps/messages.png" alt="" data-pending data-replay style="--x: 30%; --y: 52%; --r: -8deg" />
@@ -189,21 +157,19 @@
             <div class="holo__glare"></div>
           </div>
         </div>
-        <p class="ticket-hint" data-after="Click to proceed to the next exhibit.">Click to stamp your ticket.</p>
       </div>
 
-      <ul class="stamp-row" aria-label="The seven exhibit stamps">
-        <li><img src="assets/stamps/messages.png" alt="Messages stamp" />Messages</li>
-        <li><img src="assets/stamps/bots.png" alt="Bots stamp" />Bots</li>
-        <li><img src="assets/stamps/gamers.png" alt="Gamers stamp" />Gamers</li>
-        <li><img src="assets/stamps/oc.png" alt="Original content stamp" />OC</li>
-        <li><img src="assets/stamps/dub.png" alt="Dub stamp" />Dub</li>
-        <li><img src="assets/stamps/lowlights.png" alt="Lowlights stamp" />Lowlights</li>
-        <li><img src="assets/stamps/you.png" alt="You stamp" />You</li>
+      <ul class="stamp-row">
+        <li><img src="assets/stamps/messages.png" alt="Messages stamp" /></li>
+        <li><img src="assets/stamps/bots.png" alt="Bots stamp" /></li>
+        <li><img src="assets/stamps/gamers.png" alt="Gamers stamp" /></li>
+        <li><img src="assets/stamps/oc.png" alt="Original content stamp" /></li>
+        <li><img src="assets/stamps/dub.png" alt="Dub stamp" /></li>
+        <li><img src="assets/stamps/lowlights.png" alt="Lowlights stamp" /></li>
+        <li><img src="assets/stamps/you.png" alt="You stamp" /></li>
       </ul>
 
-      <p class="todo">How exhibit completion works: the ticket is handed back at the end of each exhibit, clicking it advances you to the next one, and it collects a stamp for the exhibit you just finished.</p>
-      <p class="todo">What is behind it: localStorage progress, per-member name and role color on the ticket, generated stamp placement.</p>
+      <p>Once signed in, the user receives a ticket that gets stamped each time they exit an exhibit!</p>
     </div>
   </section>
 
@@ -211,10 +177,6 @@
        2. Bots
        ================================================================ -->
   <section id="bots" class="exhibit" data-theme="bots">
-    <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Exhibit 2</p>
-      <h1 class="exhibit__title">Bots</h1>
-    </div>
 
     <!-- Bots sequence: beams, cherry-blossom petals, bot messages with
          per-bot nameplate color, click-to-continue hint, Wordle tile reveal
@@ -226,53 +188,13 @@
         <div class="crescendo__vignette"></div>
         <div class="crescendo__tint"></div>
       </div>
-
-      <div class="bot-chat">
-        <div class="bot-msg" style="--bot: var(--primary-bigben)">
-          <div class="bot-msg__avatar" aria-hidden="true">B</div>
-          <div class="bot-msg__body">
-            <span class="bot-msg__name">bigben</span>
-            <p class="bot-msg__text">Welcome to the bot wing. We kept the server running while you all argued.</p>
-          </div>
-        </div>
-        <div class="bot-msg" style="--bot: var(--primary-dadbot)">
-          <div class="bot-msg__avatar" aria-hidden="true">D</div>
-          <div class="bot-msg__body">
-            <span class="bot-msg__name">dadbot</span>
-            <p class="bot-msg__text">Hi kept the server running, I'm dad.</p>
-          </div>
-        </div>
-        <!-- Wordle speaks in tiles (WordleLetterReveal). Letters are scored
-             against ALBUM; the word WORDLE gets a red E, and that tile's flip
-             starts the screen glitch. The second message pops on completion. -->
-        <div class="bot-msg bot-msg--right" style="--bot: var(--primary-wordle)">
-          <div class="bot-msg__avatar" aria-hidden="true">W</div>
-          <div class="bot-msg__body">
-            <span class="bot-msg__name">wordle</span>
-            <p class="bot-msg__text wordle-text">Time for WORDLE.</p>
-          </div>
-        </div>
-        <div class="bot-msg bot-msg--right bot-msg--cont" style="--bot: var(--primary-wordle)">
-          <div class="bot-msg__avatar" aria-hidden="true"></div>
-          <div class="bot-msg__body">
-            <p class="bot-msg__text wordle-text" data-pop>AAAAAAAAAAAAAAAA</p>
-          </div>
-        </div>
-      </div>
-
-      <p class="hint">Click to continue</p>
     </div>
 
     <div class="exhibit__inner">
-      <div class="specimen">
-        <span class="font-header" style="font-weight:300">Header: General Sans 300</span>
-        <span class="font-text">Body: General Sans, 18px</span>
-        <span class="font-accent"><em>Accent: General Sans italic</em></span>
-        <small>data-theme="bots"</small>
-      </div>
-
-      <p class="todo">Exhibit concept: bots as tour guides for bot-usage stats.</p>
-      <p class="todo">What was built: intro video gate, sequence reveal engine, Wordle glitch, ten graph types.</p>
+      <p>We have bots in our server, some created by us! A few stand out as "main characters" in their own right, which is why they got a group chat to share stats to the user.</p>
+      <p>The story here is that the official Wordle Discord integration is becoming more popular than our classic bots. The times are a-changing.</p>
+      <p>Wordle only speaks in 5 letter words graded against the secret answer. Although "Wordle" itself is 6 letters long...</p>
+      <p class="todo">[gif of wordle exploding]</p>
     </div>
   </section>
 
@@ -285,47 +207,18 @@
     <div class="gamers-bar gamers-bar--bottom" aria-hidden="true"></div>
 
     <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Exhibit 3</p>
-      <h1 class="exhibit__title">Gamers</h1>
-
-      <!-- Gallery hero (page.tsx) -->
-      <div class="gamers-hero">
-        <h2>Gamers</h2>
-        <p class="gamers-hero__by">A gallery brought to you by <strong>The Pranger Foundation</strong></p>
-      </div>
-    </div>
-
-    <!-- Stations: scroll-snap strip, framed works with placards, staggered reveal. -->
-    <div class="stage gallery-strip reveal-group" data-stagger="700">
-      <div class="station">
-        <div class="frame">screenshot slot</div>
-        <p class="placard" data-scramble="Hours played, by year">Hours played, by year</p>
-      </div>
-      <div class="station">
-        <div class="frame frame--gold2">screenshot slot</div>
-        <p class="placard" data-scramble="Genre treemap">Genre treemap</p>
-      </div>
-      <div class="station">
-        <div class="frame frame--wood">screenshot slot</div>
-        <p class="placard placard--wood" data-scramble="Game mentions in chat">Game mentions in chat</p>
-      </div>
-    </div>
-
-    <div class="exhibit__inner">
-      <!-- The foundation's letter (foldedCorner) -->
-      <div class="folded-corner">
-        <p class="todo">The letter from the foundation that opens the gallery. Two or three sentences in the museum's voice.</p>
-      </div>
-
       <div class="specimen">
         <span class="font-header">Header: Calvino</span>
         <span class="font-text">Body: Calvino, 18px</span>
         <span class="font-accent">Accent: Filmotype Yukon</span>
-        <small>data-theme="gamers"</small>
       </div>
 
-      <p class="todo">Exhibit concept: a memorial gallery from a fictional foundation.</p>
-      <p class="todo">What was built: 24 stations, Steam data, genre treemap, game mentions, clip lightboxes, the wine-bottle easter egg.</p>
+      <p>The games exhibit was designed and implemented by Ethan! It collects our Steam data together to showcase our favorite games of all time.</p>
+      <p>This is the most museum-like exhibit of them all, like a long hallway with framed photos you have a passing interest in.</p>
+      <p>Oh and there's free wine.</p>
+      <figure class="blog-figure">
+        <img src="images/time.png" alt="" loading="lazy" />
+      </figure>
     </div>
   </section>
 
@@ -333,11 +226,6 @@
        4. Original Content
        ================================================================ -->
   <section id="oc" class="exhibit" data-theme="oc">
-    <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Exhibit 4</p>
-      <h1 class="exhibit__title">#original-content</h1>
-
-    </div>
 
     <!-- WordDocumentUi: app top bars, desk, page. The page content types
          itself out (RevealContent). Click the page to finish early. -->
@@ -365,24 +253,17 @@
         <div class="wdoc__desk">
           <div class="wdoc__page reveal-border">
             <div class="reveal-content">
-              <p>hey! it's Ben</p>
-              <p>I wanted to talk to you about #original-content</p>
               <h1>#original-content</h1>
-              <p class="todo">Exhibit concept: a personal letter about the creative channel.</p>
-              <p class="todo">What was built: the character reveal engine, media embeds, the Scrandle game demo.</p>
-              <figure class="reveal-block">
-                <div class="specimen">
-                  <span class="font-header">Header: Palatino</span>
-                  <span class="font-text">Body: Palatino, 18px</span>
-                  <span class="font-accent">Accent: Palatino</span>
-                  <small>data-theme="oc"</small>
-                </div>
-              </figure>
+              <p>We have a channel called #original-content. I love this channel! It lets us showcase our most creative selves.</p>
+              <p>In contrast with that beauty, I designed this one as an abominable pseudo-Word application that progressively reveals the script. The bold, italic, and underline buttons actually work!</p>
+              <p>We have a lot of amazing talent in the server and that should be the focus!</p>
+              <p class="todo">[screenshot of some of the art?]</p>
+              <p class="todo">[music player?]</p>
+              <p>Nested in this exhibit is a clone of Scrandle, the daily food-ranking game. That project involved a lot of manual data tagging, entry, and statistics. We don't have time to get into that here, but feel free to ask me about it!</p>
             </div>
           </div>
         </div>
       </div>
-    <p class="stage-note">The letter types itself when it scrolls into view. Click the page to skip to the end.</p>
   </section>
 
   <!-- ================================================================
@@ -393,50 +274,42 @@
     <div class="film-grain film-grain--noise" aria-hidden="true"><div class="film-grain__noise"></div></div>
     <div class="film-grain film-grain--speckle" aria-hidden="true"><div class="film-grain__speckle"></div></div>
 
-    <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Exhibit 5</p>
-      <h1 class="exhibit__title">the dub</h1>
-    </div>
-
-    <!-- FilmStripBackdrop around a Projected title card -->
-    <div class="stage film-strip-wrap">
-      <div class="film-strip">
-        <div class="film-strip__rail" aria-hidden="true"></div>
-        <div class="film-strip__cell">
-          <div class="projected dub-title">
-            <div class="projected__bg" aria-hidden="true"></div>
-            <p class="dub-title__eyebrow">Exhibit 5</p>
-            <h2>the dub</h2>
+    <!-- JacksonLetterSection: a full-width subtle Projected whose blurred,
+         tilted background is the FilmStripBackdrop (taupe strip, dashed
+         sprocket borders, three cream frames). The prose sits on top of
+         the middle frame the way the museum projects its letters. -->
+    <div class="stage dub-letter-wrap">
+      <div class="projected projected--subtle dub-letter">
+        <div class="projected__bg dub-letter__bg" aria-hidden="true">
+          <div class="film-strip-wrap">
+            <div class="film-strip">
+              <div class="film-strip__frame"></div>
+              <div class="film-strip__frame"></div>
+              <div class="film-strip__frame"></div>
+            </div>
           </div>
         </div>
-        <div class="film-strip__rail" aria-hidden="true"></div>
+        <div class="dub-letter__content">
+          <div class="dub-letter__grid">
+            <div class="dub-letter__spacer" aria-hidden="true"></div>
+            <div class="dub-letter__body">
+              <div class="dub-letter__avatar" aria-hidden="true"></div>
+              <div class="dub-letter__text">
+                <div>
+                  <p>This exhibit showcases a series of videos we made starting during COVID.</p>
+                  <p>I aimed for a filmic look, although it may have ended up a bit on the nose...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="exhibit__inner">
-      <!-- QuoteProjection -->
-      <div class="quote-grid">
-        <figure class="projected projected--subtle quote-projection">
-          <div class="projected__bg" aria-hidden="true"></div>
-          <blockquote>A line from the dub goes here, the way the exhibit projects them onto the wall.</blockquote>
-          <figcaption>a member, episode 3</figcaption>
-        </figure>
-        <figure class="projected projected--subtle quote-projection">
-          <div class="projected__bg" aria-hidden="true"></div>
-          <blockquote>Another one, shorter.</blockquote>
-          <figcaption>a member, episode 7</figcaption>
-        </figure>
-      </div>
-
       <div class="specimen">
-        <span class="font-header">Header: Fraunces</span>
-        <span class="font-text">Body: Fraunces, 20px</span>
         <span class="font-accent">Accent: Corsario</span>
-        <small>data-theme="dub"</small>
       </div>
-
-      <p class="todo">Exhibit concept: the group's quarantine-era fan-dub series.</p>
-      <p class="todo">What was built: shuffle lines, editor cards, per-user contribution cards, the letters. Cross-link to the transcript pipeline.</p>
     </div>
   </section>
 
@@ -444,57 +317,25 @@
        6. Lowlights
        ================================================================ -->
   <section id="lowlights" class="exhibit" data-theme="lowlights">
-    <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Exhibit 6</p>
-      <h1 class="exhibit__title">Lowlights</h1>
-    </div>
-
-    <!-- lowlights/page.tsx: awards card, limo, body column with the Gilded Dumpies logo -->
-    <div class="stage ll-stage">
-      <div class="ll-card">
-        <p class="ll-card__exhibit">Exhibit 6</p>
-        <h2 class="ll-card__title">LOWLIGHTS</h2>
-        <p class="ll-card__tag">An Awards Show<br />You Don't Want to Miss</p>
-      </div>
-      <img class="ll-limo" src="assets/lowlights/limo.png" alt="A stretch limousine pulling up to the awards show" loading="lazy" />
-      <div class="ll-body">
-        <img class="ll-logo" src="assets/lowlights/gilded-dumpies-logo.svg" alt="The Gilded Dumpies" />
-        <p class="todo">Exhibit concept: an awards show for the most-upvoted posts.</p>
-        <p class="todo">What was built: 28-slide deck, per-member newspapers, superlatives.</p>
-
-        <!-- Link card: funky speech bubble over a breathing cardboard box -->
-        <div class="ll-link">
-          <div class="bubble-top">Come on in!</div>
-          <img class="ll-box" src="assets/lowlights/cardboard-box.png" alt="A cardboard box" loading="lazy" />
-        </div>
-      </div>
-    </div>
 
     <!-- SlideDeck: the cardboard diorama the awards show plays in. Swinging
-         curtains, spotlight gradient, and the host with a funky speech
-         bubble. Click to cycle Dumpy's lines. -->
-    <div class="stage diorama" tabindex="0" role="button" aria-label="The awards-show stage. Click to hear Dumpy's next line.">
-      <div class="diorama__content">
-        <p class="diorama__title funky">There's nothing here...</p>
-        <div class="dumpy">
-          <div class="dumpy__figure" aria-hidden="true">Dumpy</div>
-          <div class="bubble-right" data-lines='["Welcome to the Gilded Dumpies!","Please hold your applause.","No really. Hold it.","...","Let\u2019s get on with the show."]'>Welcome to the Gilded Dumpies!</div>
-        </div>
-      </div>
+         curtains and the spotlight gradient. -->
+    <div class="stage diorama">
       <img class="diorama__curtain diorama__curtain--left" src="assets/lowlights/side-curtain-upgraded.webp" alt="" aria-hidden="true" loading="lazy" />
       <img class="diorama__curtain diorama__curtain--right" src="assets/lowlights/side-curtain-upgraded-right.webp" alt="" aria-hidden="true" loading="lazy" />
       <img class="diorama__valance diorama__valance--front" src="assets/lowlights/top-curtain-front.webp" alt="" aria-hidden="true" loading="lazy" />
       <img class="diorama__valance diorama__valance--back" src="assets/lowlights/top-curtain-bottom.webp" alt="" aria-hidden="true" loading="lazy" />
       <div class="diorama__spotlight" aria-hidden="true"></div>
     </div>
-    <p class="stage-note">The deck runs 28 slides in here. The text funks between three skews once a second; the curtains swing on their own clocks.</p>
 
     <div class="exhibit__inner">
+      <p>This exhibit is an awards show, also designed and implemented by Ethan. It goes through the most reacted-to posts we've made over the last 10 years, culminating in the top post of all time!</p>
+      <p class="todo">[gif of one of the pages]</p>
+      <p class="todo">[screenshot of The Do Times]</p>
+
       <div class="specimen">
         <span class="font-header">Header: LTC Goudy Text</span>
-        <span class="font-text">Body: Geist, 16px</span>
         <span class="font-accent">Accent: LTC Goudy Text</span>
-        <small>data-theme="lowlights"</small>
       </div>
     </div>
   </section>
@@ -503,44 +344,40 @@
        7. You (magic theme)
        ================================================================ -->
   <section id="you" class="exhibit" data-theme="magic">
-    <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Exhibit 7</p>
-      <h1 class="exhibit__title">You</h1>
-    </div>
 
-    <!-- Live vortex sphere (whid10-vortex.js mounts a canvas here) -->
-    <div class="stage you-stage" data-vortex>
-      <div class="you-stage__overlay">
-        <h2>You</h2>
-        <p>a reading in ten archetypes</p>
-      </div>
-    </div>
+    <!-- Scroll track: a tall block that pins the stage while the page
+         scrolls through it. whid10-vortex.js reads the track's progress
+         and flies the camera from far outside the sphere to the backdrop
+         framing inside it; the card and copy fade in over the last stretch
+         (CSS scroll-driven animations on the track's view timeline). -->
+    <div class="you-scroll" data-vortex-track>
+      <!-- Live vortex sphere (whid10-vortex.js mounts a canvas here) -->
+      <div class="stage you-stage" data-vortex>
+        <div class="you-reveal">
+          <div class="you-media">
+            <!-- One tilting card, same tilt code as the ticket -->
+            <div class="holo holo--card">
+              <div class="holo__card">
+                <div class="holo__content"></div>
+                <div class="holo__shimmer"></div>
+                <div class="holo__glare"></div>
+              </div>
+            </div>
+          </div>
 
-    <div class="exhibit__inner">
-      <div class="you-media">
-        <!-- Recording slot for the R3F parts (card selection). Drop a file at
-             assets/you/card-selection.mp4 and swap this div for a <video>. -->
-        <div class="you-recording">recording: card selection</div>
-        <!-- One tilting card, same tilt code as the ticket -->
-        <div class="holo holo--card">
-          <div class="holo__card">
-            <div class="holo__content">The Archivist</div>
-            <div class="holo__shimmer"></div>
-            <div class="holo__glare"></div>
+          <div class="you-copy">
+            <p>This exhibit is specific to the signed-in user. Given how they fall on 5 different stats, they are given 5 tarot cards (out of 10): how many attachments, invites, messages, pings, and reactions you use compared to everyone else.</p>
+            <p>The card designs were painted by John.</p>
+            <p>I learned the basics of shader-building for this page. That tended to confuse people since they knew I was working on a website, not a game.</p>
           </div>
         </div>
       </div>
+    </div>
 
+    <div class="exhibit__inner">
       <div class="specimen">
         <span class="font-header">Header: Fayte Pixel Hard</span>
-        <span style="font-family: var(--font-subheader); font-style: normal">Subheader: Jacquard 24</span>
-        <span class="font-text">Body: Fraunces italic, 18px</span>
-        <span class="font-accent">Accent: Jacquard 12</span>
-        <small>data-theme="magic"</small>
       </div>
-
-      <p class="todo">Exhibit concept: a personalized reading from ten archetypes.</p>
-      <p class="todo">What was built: Three.js crystal ball, custom GLSL (caustic, vortex, holographic ticket), card selection, personal stats pipeline.</p>
     </div>
   </section>
 
@@ -548,69 +385,34 @@
        8. Gift shop
        ================================================================ -->
   <section id="gift-shop" class="exhibit" data-theme="gift-shop">
-    <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Gift shop</p>
-      <h1 class="exhibit__title">whid merch gift shop</h1>
-    </div>
 
     <!-- The shop itself (wall, rack, shelves, "sold out!!!" tag) is carried by a
          screenshot rather than a rebuild. -->
-    <p class="todo">Illustration: a screenshot of the shop wall with the rack, shelves and the sold-out tag.</p>
 
     <div class="exhibit__inner">
       <div class="specimen">
         <span class="font-header"><em>Header: Gibson italic</em></span>
         <span class="font-text">Body: Gibson, 18px</span>
         <span class="font-accent">Accent: Gibson</span>
-        <small>data-theme="gift-shop"</small>
       </div>
 
-      <p class="todo">Merch designed and sold: shirt designs, order form, payment methods, admin order tracking, fulfillment.</p>
+      <p>The experience ended at the gift shop, where everyone could place an order for a t-shirt I designed! The orders were stored in Convex, and the shirts will be printed Soon&trade;</p>
     </div>
   </section>
 
   <!-- ================================================================
-       Hallway: default theme. Non-exhibit sections from the plan
-       (section 10). Cut or merge before writing.
+       Epilogue: default theme.
        ================================================================ -->
-  <section id="behind-the-scenes" class="exhibit" data-theme="default">
+  <section id="epilogue" class="exhibit" data-theme="default">
     <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Behind the scenes</p>
-      <h1 class="exhibit__title">Everything the museum never shows you</h1>
 
-      <div class="specimen">
-        <span class="font-header">Header: Geist</span>
-        <span class="font-text">Body: Geist, 18px</span>
-        <span class="font-accent">Accent: Geist Mono</span>
-        <small>data-theme="default"</small>
-      </div>
+      <p>This project was herculean. I'm not sure how we even managed to pull it off in the time frame. In the end, leading a team of 6 is a surprisingly high number. Each person had their own interests and scope; John was an illustrator for the tarot card, Tristan did the writing for Bots and Games, while Jun wrote the integration for Steam and LLM-based game categorization in messages, and Ethan implemented Games and Lowlights.</p>
+      <p>I couldn't have asked for a better team, or a group of friends to make this kind of thing for.</p>
 
-      <h2>Tickets and stamps</h2>
-      <p class="todo">Exhibit completion, holographic ticket, localStorage progress, generated stamp placement.</p>
-
-      <h2>Data pipeline</h2>
-      <p class="todo">Incremental Discord export, ~35 marimo notebooks, JSON+MD exports, generated typed index consumed by Next.js.</p>
-
-      <h2>Manual data entry and annotation tools</h2>
-      <p class="todo">dub-processing transcripts, transcript-review, message-review, oc-annotator, Scrandle + voter, avatar and Steam mapping scripts.</p>
-
-      <h2>Design and illustration</h2>
-      <p class="todo">Tickets, stamps, tarot cards, logos, gift shop, curtains, cherry blossoms. One design system per exhibit.</p>
-
-      <h2>Writing</h2>
-      <p class="todo">Scripted exhibits, V1 to V3 drafts, voice per exhibit.</p>
-
-      <h2>Architecture</h2>
-      <p class="todo">pnpm monorepo, Next.js 16 + React 19, Tailwind 4, Convex, Discord OAuth allowlist, Vercel, header-based theming, media security.</p>
-
-      <h2>Process and velocity</h2>
-      <p class="todo">Monthly commit curve, conventions, AI-assisted workflow, what was delegated vs. hand-written.</p>
-
-      <h2>Team</h2>
-      <p class="todo">Six contributors, roles.</p>
-
-      <h2>Launch and retrospective</h2>
-      <p class="todo">Launch day, what broke, what you'd change.</p>
+      <p>Content warning: hot takes:</p>
+      <figure class="hot-takes">
+        <img src="assets/epilogue/dev-stack-takeaways.png" alt="A Discord message listing dev stack takeaways from working on whid10: Next.js, Tailwind, shadcn, Base UI, Vercel, Convex, pnpm monorepo, ESLint, and marimo." loading="lazy" />
+      </figure>
     </div>
   </section>
 
@@ -619,8 +421,6 @@
        ================================================================ -->
   <section id="thank-you" class="exhibit" data-theme="default">
     <div class="exhibit__inner">
-      <p class="exhibit__eyebrow">Thank you</p>
-      <h1 class="exhibit__title">Thanks for visiting.</h1>
 
       <!-- The fully stamped ticket. Placements follow generateStampPlacement's
            bounds (x 8–92%, y 20–80%, ±18°, min spacing 17%). -->
@@ -641,10 +441,8 @@
             <div class="holo__glare"></div>
           </div>
         </div>
-        <p class="ticket-hint" data-after="Click a stamp to return to that exhibit.">Click a stamp to return to that exhibit.</p>
       </div>
 
-      <p class="todo">Closing, credits, colophon (how this page was built, font credits, anonymization statement), link back to <a href="../">ruck.dev</a>.</p>
     </div>
   </section>
 
