@@ -1,0 +1,2603 @@
+/* ==========================================================================
+   whid10 portfolio page
+   Theme tokens ported from ../webapp/packages/webapp/src/app/globals.css.
+   Each exhibit is a <section data-theme="..."> and the [data-theme] rule
+   below does what the museum's :root rule does for a whole route.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Self-hosted fonts (Fontshare FF EULA, see fonts/GeneralSans-FFL.txt).
+   Everything else arrives via the Adobe Fonts kit and Google Fonts links in
+   index.html.
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "General Sans";
+  src: url("fonts/GeneralSans-Variable.woff2") format("woff2");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "General Sans";
+  src: url("fonts/GeneralSans-VariableItalic.woff2") format("woff2");
+  font-weight: 200 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   Page base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  text-wrap: pretty;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Default ("hallway") tokens. Same values as the museum's :root. These also
+   act as the fallback for any token a theme forgets to set.
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="default"] {
+  --accent-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.371 0 0);
+  --background: oklch(0.145 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --foreground: oklch(0.985 0 0);
+  --input: oklch(1 0 0 / 15%);
+  --muted-foreground: oklch(0.708 0 0);
+  --muted: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.87 0 0);
+  --ring: oklch(0.556 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.269 0 0);
+  --link-foreground: var(--primary);
+  --link-hover-foreground: var(--foreground);
+  --text-font-size: 18px;
+  --radius: 0.625rem;
+
+  --font-header: "Geist", system-ui, sans-serif;
+  --font-text: "Geist", system-ui, sans-serif;
+  --font-accent: "Geist Mono", ui-monospace, monospace;
+}
+
+/* --------------------------------------------------------------------------
+   What the museum applies to :root, applied per themed section instead.
+   Heading sizes are in em (not rem) so they scale with each theme's
+   --text-font-size the way they do in the museum.
+   -------------------------------------------------------------------------- */
+[data-theme] {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-text);
+  font-size: var(--text-font-size);
+  font-style: normal;
+  line-height: 1.5;
+  border-color: var(--border);
+  scrollbar-color: var(--muted) var(--background);
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-header);
+    font-weight: bold;
+    line-height: 1.15;
+    margin: 0 0 0.5em;
+  }
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.25em; }
+  h4 { font-size: 1em; }
+  h5 { font-size: 0.875em; }
+  h6 { font-size: 0.75em; }
+
+  p {
+    margin: 0 0 1em;
+  }
+
+  a {
+    color: var(--link-foreground);
+  }
+  a:hover {
+    color: var(--link-hover-foreground);
+  }
+
+  button:not([disabled]) {
+    cursor: pointer;
+  }
+
+  .font-header { font-family: var(--font-header); }
+  .font-text   { font-family: var(--font-text); }
+  .font-accent { font-family: var(--font-accent); }
+}
+
+/* --------------------------------------------------------------------------
+   Themes. Order matches exhibit-order.md. Comments carried from the museum.
+   -------------------------------------------------------------------------- */
+
+/* login: the museum's front door (whyd22 "whid-orange" lineage) */
+[data-theme="login"] {
+  --background: #222;
+  --foreground: #fff;
+
+  --muted: #303030;
+  --muted-foreground: #adb5bd;
+
+  --primary: #ffd294;
+  --primary-foreground: #222;
+
+  --secondary: #444;
+  --secondary-foreground: #fff;
+
+  --accent: #00bc8c;
+  --accent-foreground: #fff;
+
+  --popover: #303030;
+  --popover-foreground: #fff;
+
+  --border: #444;
+  --input: #444;
+  --ring: #ffd294;
+
+  --link-foreground: #ffd294;
+  --link-hover-foreground: #cca876;
+
+  /* Brand gradient used for the title text and button accents on the
+     original whyd22 landing page. */
+  --brand-gradient: linear-gradient(99deg, #a3eff7, #ffd294, #fcaecf, #bda6ff);
+
+  --radius: 0.5rem;
+  --text-font-size: 18px;
+
+  --font-header: "canada-type-gibson", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-text: "canada-type-gibson", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-accent: "filmotype-yukon", "Brush Script MT", cursive;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-style: italic;
+  }
+  h1 { font-size: 3em; }
+  h2 { font-size: 2.5em; }
+  h3 { font-size: 2em; }
+  h4 { font-size: 1.5em; }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+/* messages: Exhibit 1 */
+[data-theme="messages"] {
+  /* Crisp paper-white surface with RL Horizon throughout, italic for
+     headings and upright for body. Three intent colors are exposed so
+     components can pick the right one per message. */
+  --background: #fff;
+  --foreground: #000;
+
+  --muted: #f5f5f5;
+  --muted-foreground: #555;
+
+  --primary: #fff275;
+  --primary-foreground: #000;
+
+  --secondary: #f0f0f0;
+  --secondary-foreground: #000;
+
+  --accent: #f0f0f0;
+  --accent-foreground: #000;
+
+  --popover: #fff;
+  --popover-foreground: #000;
+
+  --border: #000000;
+  --input: #e5e5e5;
+  --ring: #fff275;
+
+  --primary-yellow: #fff275;
+  --primary-blue: #67a1e8;
+  --primary-red: #db4e3b;
+
+  --link-foreground: #67a1e8;
+  --link-hover-foreground: #db4e3b;
+
+  --radius: 0.25rem;
+  --text-font-size: 18px;
+
+  --font-header: "rl-horizon", Georgia, "Times New Roman", serif;
+  --font-text: "rl-horizon", Georgia, "Times New Roman", serif;
+  --font-accent: "rl-horizon", Georgia, "Times New Roman", serif;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-style: italic;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+/* bots: Exhibit 2 */
+[data-theme="bots"] {
+  --background: oklch(95% 0.00011 271.152);
+  --foreground: oklch(20% 0.00002 271.152);
+
+  --muted: #d0d0d0;
+  --muted-foreground: #555;
+
+  --primary: hsl(189, 100%, 73%);
+  --primary-foreground: oklch(20% 0.00002 271.152);
+
+  --secondary: #e0e0e0;
+  --secondary-foreground: oklch(20% 0.00002 271.152);
+
+  --accent: #f0f0f0;
+  --accent-foreground: oklch(20% 0.00002 271.152);
+
+  --popover: #fff;
+  --popover-foreground: oklch(20% 0.00002 271.152);
+
+  --border: #cdcdcd;
+  --input: #c6c6c6;
+  --ring: hsl(189, 100%, 73%);
+
+  --link-foreground: hsl(189, 74%, 66%);
+  --link-hover-foreground: hsl(189, 69%, 55%);
+
+  /* Per-bot colors. Kept in sync with the museum's getBotColor.ts. */
+  --primary-bearcatbot: rgb(51, 49, 47);
+  --primary-bigben: rgb(108, 107, 96);
+  --primary-dadbot: rgb(179, 32, 33);
+  --primary-fredboat: rgb(32, 187, 223);
+  --primary-god: rgb(201, 128, 79);
+  --primary-hackerbot: rgb(92, 68, 71);
+  --primary-hydra: rgb(10, 69, 91);
+  --primary-jermabot: rgb(213, 178, 169);
+  --primary-lindsey: rgb(140, 86, 76);
+  --primary-notsobot: rgb(120, 120, 120);
+  --primary-perlymolt: rgb(237, 90, 34);
+  --primary-rythm: rgb(43, 111, 234);
+  --primary-secuitybot4891: rgb(110, 100, 81);
+  --primary-shigure: rgb(138, 176, 206);
+  --primary-tewloudbot: rgb(199, 70, 32);
+  --primary-translate: #4a8bf5;
+  --primary-turtle: rgb(10, 161, 210);
+  --primary-unanimism: rgb(159, 215, 215);
+  --primary-usbot: rgb(215, 61, 61);
+  --primary-uzox: rgb(239, 78, 12);
+  --primary-wordle: rgb(137, 225, 99);
+
+  /* Graph chrome shared across every bot graph. */
+  --graph-axis: #787878;
+  --graph-muted: #6b6b6b;
+
+  --radius: 0.25rem;
+  --text-font-size: 18px;
+
+  --font-header: "General Sans", system-ui, sans-serif;
+  --font-text: "General Sans", system-ui, sans-serif;
+  --font-accent: "General Sans", system-ui, sans-serif;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 300;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+/* gamers: Exhibit 3 */
+[data-theme="gamers"] {
+  /* Warm dimly-lit gallery. Stone neutrals carry the canvas, with rose
+     spotlight accents and gold/wood placard tints layered on top. */
+  --gamers-bg: #1c1917;
+  --gamers-surface: #292524;
+  --gamers-card: #f5f5f4;
+  --gamers-text-strong: #1c1917;
+  --gamers-text-body: #44403c;
+  --gamers-text-muted: #78716c;
+  --gamers-text-subtle: #a8a29e;
+  --gamers-text-on-dark: #e5e7eb;
+
+  --gamers-accent: #fb7185;
+  --gamers-accent-hover: #f43f5e;
+
+  --gamers-gold-frame-start: #3d3117;
+  --gamers-gold-frame-end: #1a140a;
+  --gamers-gold-text: #d4b76b;
+  --gamers-wood-frame-start: #3e2617;
+  --gamers-wood-frame-end: #1a110a;
+  --gamers-wood-text: #d4a778;
+
+  --background: var(--gamers-bg);
+  --foreground: var(--gamers-text-on-dark);
+
+  --muted: var(--gamers-surface);
+  --muted-foreground: var(--gamers-text-muted);
+
+  --primary: var(--gamers-accent);
+  --primary-foreground: var(--gamers-bg);
+
+  --secondary: var(--gamers-surface);
+  --secondary-foreground: var(--gamers-text-on-dark);
+
+  --accent: var(--gamers-accent);
+  --accent-foreground: var(--gamers-bg);
+
+  --popover: var(--gamers-card);
+  --popover-foreground: var(--gamers-text-strong);
+
+  --border: var(--gamers-text-subtle);
+  --input: var(--gamers-surface);
+  --ring: var(--gamers-accent);
+
+  --link-foreground: var(--gamers-accent);
+  --link-hover-foreground: var(--gamers-accent-hover);
+
+  --radius: 0;
+  --text-font-size: 18px;
+
+  /* Calvino almost everywhere. Filmotype Yukon is reserved for the marquee
+     title and the inline "Games" word, applied via .font-accent. */
+  --font-header: "calvino", Georgia, serif;
+  --font-text: "calvino", Georgia, serif;
+  --font-accent: "filmotype-yukon", "Brush Script MT", cursive;
+}
+
+/* oc: Exhibit 4 */
+[data-theme="oc"] {
+  /* Palette pulled from the OC Card SVG so page chrome can echo the
+     exhibit's layered-frame illustration. */
+  --oc-paper: #fcfeff;
+  --oc-paper-2: #f2f2f2;
+  --oc-paper-3: #ebeced;
+  --oc-teal: #84d5db;
+  --oc-teal-deep: #4d7c80;
+  --oc-tan: #e6bc83;
+  --oc-pink: #deabc3;
+  --oc-lavender: #b2a4db;
+  --oc-mauve: #806270;
+  --oc-plum: #5b5470;
+  --oc-umber: #594933;
+  --oc-desk: #bbc0c4;
+  --oc-teal-soft: #c1d5d7;
+
+  --background: var(--oc-paper);
+  --muted: var(--oc-paper-3);
+  --primary: var(--oc-paper-2);
+  --secondary: var(--oc-teal-deep);
+  --accent: var(--oc-teal);
+
+  --foreground: #000;
+  --muted-foreground: #494949;
+  --accent-foreground: #000;
+  --link-foreground: var(--oc-teal-deep);
+  --link-hover-foreground: var(--oc-teal-deep);
+  --primary-foreground: #000;
+  --secondary-foreground: var(--oc-paper);
+
+  --popover-foreground: #000;
+  --popover: var(--oc-paper);
+
+  --border: #000;
+
+  --input: #c6d0d1;
+  --radius: 0;
+  --ring: var(--oc-teal-deep);
+  --text-font-size: 18px;
+
+  --font-header: palatino-linotype, "Palatino Linotype", "Book Antiqua",
+    Palatino, "URW Palladio L", serif;
+  --font-text: palatino-linotype, "Palatino Linotype", "Book Antiqua",
+    Palatino, "URW Palladio L", serif;
+  --font-accent: palatino-linotype, "Palatino Linotype", "Book Antiqua",
+    Palatino, "URW Palladio L", serif;
+
+  scrollbar-color: var(--secondary) var(--background);
+
+  h1 {
+    margin-top: 2rem;
+  }
+
+  ul {
+    margin-bottom: 1rem;
+    padding-inline-start: 1.5rem;
+    list-style-type: disc;
+
+    ul {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    text-decoration: underline 1px;
+    text-underline-offset: 3px;
+  }
+}
+
+/* dub: Exhibit 5 */
+[data-theme="dub"] {
+  --background: oklch(0.22 0.006 50);
+  --foreground: oklch(0.907 0.035 78);
+
+  --muted: oklch(0.28 0.012 50);
+  --muted-foreground: oklch(0.63 0.025 65);
+
+  --primary: oklch(0.907 0.035 78);
+  --primary-foreground: oklch(0.2 0.012 50);
+
+  --secondary: oklch(54.367% 0.0245 51.156);
+  --secondary-foreground: oklch(0.82 0.03 74);
+
+  --accent: oklch(0.32 0.018 54);
+  --accent-foreground: oklch(0.92 0.028 78);
+
+  --popover: oklch(0.26 0.012 48);
+  --popover-foreground: oklch(0.9 0.03 76);
+
+  --border: oklch(0.7 0.04 62 / 10%);
+  --input: oklch(0.7 0.04 62 / 14%);
+  --ring: oklch(0.48 0.035 58);
+
+  --link-foreground: var(--primary);
+  --link-hover-foreground: var(--secondary-foreground);
+
+  --radius: 0.75rem;
+  --text-font-size: 20px;
+
+  --font-header: "Fraunces", Georgia, serif;
+  --font-text: "Fraunces", Georgia, serif;
+  --font-accent: "corsario-variable", "Trebuchet MS", sans-serif;
+}
+
+/* lowlights: Exhibit 6 */
+[data-theme="lowlights"] {
+  /* Shared awards-show palette. */
+  --lowlights-crimson: #8c272b;
+  --lowlights-gold: #f7cc56;
+  --lowlights-deep-crimson: #491114;
+  --lowlights-orange: #ffb02e;
+  --lowlights-cream: whitesmoke;
+
+  /* Newspaper-scoped palette. */
+  --newspaper-paper: #959595;
+  --newspaper-ink: #181818;
+  --newspaper-shadow: #424242;
+
+  --background: var(--lowlights-cream);
+  --foreground: #000;
+
+  --muted: #f5f5f5;
+  --muted-foreground: #555;
+
+  --primary: var(--lowlights-crimson);
+  --primary-foreground: var(--lowlights-gold);
+
+  --secondary: var(--lowlights-deep-crimson);
+  --secondary-foreground: var(--lowlights-cream);
+
+  --accent: var(--lowlights-orange);
+  --accent-foreground: var(--lowlights-deep-crimson);
+
+  --popover: #fff;
+  --popover-foreground: #000;
+
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: var(--lowlights-orange);
+
+  --link-foreground: var(--lowlights-crimson);
+  --link-hover-foreground: var(--lowlights-deep-crimson);
+
+  --radius: 0.625rem;
+  --text-font-size: 16px;
+
+  --font-header: "ltc-goudy-text-pro", "Geist", Georgia, serif;
+  --font-text: "Geist", system-ui, sans-serif;
+  --font-accent: "ltc-goudy-text-pro", Georgia, serif;
+}
+
+/* magic: Exhibit 7, "you" */
+[data-theme="magic"] {
+  /* Deep near-black purple. The interior of the crystal ball reads against
+     a background that isn't pure black so the purple haze can bleed. */
+  --background: #0d0712;
+  --foreground: #fff3e6;
+
+  --muted: #1f1230;
+  --muted-foreground: #c9b8e6;
+
+  --primary: #c9a4ff;
+  --primary-foreground: #0d0712;
+
+  --secondary: #481c7d;
+  --secondary-foreground: #f0e4ff;
+
+  --accent: #8b3fd9;
+  --accent-foreground: #f0e4ff;
+
+  --popover: #1a0f2a;
+  --popover-foreground: #e6d8ff;
+
+  --border: rgba(180, 120, 255, 0.2);
+  --input: rgba(180, 120, 255, 0.14);
+  --ring: rgba(180, 120, 255, 0.5);
+
+  --link-foreground: var(--primary);
+  --link-hover-foreground: var(--foreground);
+
+  --radius: 0.25rem;
+  --text-font-size: 18px;
+
+  /* Hierarchy: fayte-pixel-hard (biggest) > Jacquard 24 > Jacquard 12 >
+     italic Fraunces (body). */
+  --font-header: "fayte-pixel-hard", "Jacquard 24", monospace;
+  --font-subheader: "Jacquard 24", monospace;
+  --font-text: "Fraunces", Georgia, serif;
+  --font-accent: "Jacquard 12", monospace;
+
+  font-style: italic;
+
+  /* Only body text is italic; the pixel/display faces are not. */
+  h1, h2, h3, h4, h5, h6,
+  .font-header,
+  .font-accent {
+    font-style: normal;
+    font-weight: normal;
+  }
+
+  sup {
+    color: var(--muted-foreground);
+    font-size: small;
+  }
+}
+
+/* gift-shop */
+[data-theme="gift-shop"] {
+  /* Merch lighting tiers, keyed to how far each piece protrudes from the wall. */
+  --drop-shadow-merch-sm: 0 4px 3px rgba(0, 0, 0, 0.35);
+  --drop-shadow-merch-md: 0 8px 6px rgba(0, 0, 0, 0.35);
+  --drop-shadow-merch-lg: 0 10px 8px rgba(0, 0, 0, 0.4);
+
+  /* Hybrid of the messages and bots themes. */
+  --background: oklch(97% 0.00011 271.152);
+  --foreground: #000;
+
+  --muted: #ececec;
+  --muted-foreground: #555;
+
+  --primary: hsl(189, 100%, 73%);
+  --primary-foreground: #000;
+
+  --secondary: #f0f0f0;
+  --secondary-foreground: #000;
+
+  --accent: #fff275;
+  --accent-foreground: #000;
+
+  --popover: #fff;
+  --popover-foreground: #000;
+
+  --border: #d8d8d8;
+  --input: #e5e5e5;
+  --ring: hsl(189, 100%, 73%);
+
+  --primary-yellow: #fff275;
+  --primary-blue: #67a1e8;
+  --primary-red: #db4e3b;
+
+  --link-foreground: #67a1e8;
+  --link-hover-foreground: #db4e3b;
+
+  --radius: 0.25rem;
+  --text-font-size: 18px;
+
+  --font-header: "canada-type-gibson", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-text: "canada-type-gibson", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-accent: "canada-type-gibson", system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-style: italic;
+  }
+  h1 { font-size: 3em; }
+  h2 { font-size: 2.5em; }
+  h3 { font-size: 2em; }
+  h4 { font-size: 1.5em; }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Page layout. Motif blocks follow at the end of the file.
+   -------------------------------------------------------------------------- */
+.exhibit {
+  padding: clamp(4rem, 10vh, 8rem) 1.5rem;
+}
+
+.exhibit__inner {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+
+.exhibit__eyebrow {
+  font-family: var(--font-accent);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8em;
+  margin-bottom: 0.5em;
+}
+
+.exhibit__title {
+  margin-bottom: 1.5rem;
+}
+
+/* Placeholder prose blocks. Remove once real writing lands. */
+.todo {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 0.75em 1em;
+  color: var(--muted-foreground);
+  font-size: 0.9em;
+}
+.todo::before {
+  content: "[write] ";
+  font-family: var(--font-accent);
+}
+
+/* Type specimen. Verifies every theme's three font roles render. Delete
+   this block and the .specimen markup once fonts are confirmed. */
+.specimen {
+  display: grid;
+  gap: 0.5rem;
+  margin-block: 2rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+  color: var(--foreground);
+}
+.specimen > span {
+  display: block;
+  font-size: 1.5em;
+  line-height: 1.2;
+}
+.specimen > small {
+  color: var(--muted-foreground);
+  font-family: ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-style: normal;
+}
+
+/* Sticky nav (plain links; stamp icons are optional polish) */
+.stamp-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 1rem;
+  background: oklch(0.145 0 0 / 85%);
+  backdrop-filter: blur(8px);
+  color: oklch(0.985 0 0);
+  font: 14px "Geist", system-ui, sans-serif;
+}
+.stamp-nav a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.7;
+}
+.stamp-nav a:hover,
+.stamp-nav a[aria-current="true"] {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ==========================================================================
+   Motifs. One block per exhibit, values carried over from the museum's
+   CSS modules and Tailwind classes. Behavior lives in whid10.js.
+   ========================================================================== */
+
+/* A stage is a full-width band inside an exhibit that hosts the motif. It
+   sits outside .exhibit__inner so it can span the section. */
+.stage {
+  position: relative;
+  margin: 2.5rem 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.stage-note {
+  font-family: var(--font-accent);
+  font-size: 0.8em;
+  color: var(--muted-foreground);
+  text-align: center;
+  margin: 0.75rem 1.5rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   Front door: gradient title, conic outline logo, spinning conic button,
+   logo swap (HomepageSignedOut.module.scss, WhidLogo.module.scss)
+   -------------------------------------------------------------------------- */
+@property --whid-btn-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: true;
+}
+@property --whid-outline-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.door {
+  display: grid;
+  justify-items: center;
+  gap: 1.75rem;
+  padding: 2rem 1.5rem 3rem;
+  text-align: center;
+}
+
+.whid-logo {
+  --logo-h: clamp(110px, 22vw, 160px);
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: var(--logo-h);
+  width: 100%;
+}
+.whid-logo > * {
+  grid-area: 1 / 1;
+  /* Explicit height, not 100%: a percentage against the auto grid track
+     lets the aspect-ratio derive the size from the column width instead. */
+  height: var(--logo-h);
+  width: auto;
+  max-width: 100%;
+  transform-origin: top;
+}
+.whid-logo__main {
+  display: block;
+  aspect-ratio: 383.02533 / 155.27582;
+  overflow: visible;
+}
+.whid-logo__alt {
+  height: calc(var(--logo-h) * 0.9);
+  max-width: 90%;
+  object-fit: contain;
+}
+/* AnimatedHomepageLogoSlot: the outgoing logo drops out of frame while the
+   next one rises into place, both in --swap-ms. Opacity snaps in two steps
+   so the two never blend. */
+.whid-logo {
+  --swap-ms: 100ms;
+}
+.whid-logo > .is-hidden {
+  opacity: 0;
+  transform: translateY(100px) scale(1.1, 0.85);
+  pointer-events: none;
+}
+.whid-logo > .is-visible {
+  opacity: 1;
+}
+.whid-logo > .is-drop {
+  animation:
+    logo-drop var(--swap-ms) cubic-bezier(0.95, 0, 0.13, 1) both,
+    logo-fade-out var(--swap-ms) steps(2, jump-none) both;
+}
+.whid-logo > .is-rise {
+  animation:
+    logo-rise var(--swap-ms) cubic-bezier(0.95, 0, 0.13, 1) both,
+    logo-fade-in var(--swap-ms) steps(2, jump-none) both;
+}
+@keyframes logo-drop {
+  from {
+    transform: translateY(0) scale(1, 1);
+    filter: blur(0);
+  }
+  to {
+    transform: translateY(200px) scale(0.92, 1.18);
+    filter: blur(5px);
+  }
+}
+@keyframes logo-rise {
+  from {
+    transform: translateY(25px) scale(1.01, 0.95);
+  }
+  to {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+@keyframes logo-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes logo-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.whid-logo__conic {
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(
+    from var(--whid-outline-angle) at 50% 50%,
+    #a3eff7,
+    #ffd294,
+    #fcaecf,
+    #bda6ff,
+    #a3eff7
+  );
+  animation: whid-outline-spin 10s linear infinite;
+}
+@keyframes whid-outline-spin {
+  to {
+    --whid-outline-angle: 360deg;
+  }
+}
+
+.gradient-text {
+  position: relative;
+  color: transparent;
+  background: linear-gradient(99deg, #a3eff7, #ffd294, #fcaecf, #bda6ff);
+  overflow: clip;
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 200% 100%;
+  background-position: 100%;
+  transition: background-position 0.5s ease;
+  animation: background-move 10s ease-in-out infinite;
+}
+@keyframes background-move {
+  0%,
+  100% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+}
+
+.conic-button {
+  position: relative;
+  z-index: 0;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius);
+  padding: 0.6em 1.4em;
+  font: inherit;
+  font-weight: 600;
+  color: var(--foreground);
+  background-color: var(--background);
+  animation: whid-btn-spin 10s linear infinite;
+  transition: background-color 0.2s ease;
+}
+.conic-button:hover {
+  background-color: var(--muted);
+}
+.conic-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--whid-btn-angle),
+    #a3eff7,
+    #ffd294,
+    #fcaecf,
+    #bda6ff,
+    #a3eff7
+  );
+  filter: blur(15px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.conic-button:hover::after {
+  opacity: 0.6;
+}
+.conic-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--whid-btn-angle),
+    #a3eff7,
+    #ffd294,
+    #fcaecf,
+    #bda6ff,
+    #a3eff7
+  );
+  mask-image: linear-gradient(black, black), linear-gradient(black, black);
+  mask-clip: content-box, border-box;
+  mask-origin: content-box, border-box;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+@keyframes whid-btn-spin {
+  to {
+    --whid-btn-angle: 360deg;
+  }
+}
+.conic-button__icon {
+  width: 1.1em;
+  height: 1.1em;
+  vertical-align: -0.2em;
+  margin-right: 0.4em;
+  fill: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   Messages: bordered title card, three primary shapes that dart, pivot and
+   reflect away from the pointer (messages/components/*). The hero is
+   overflow-visible in the museum, so shapes may leave the stage before
+   they wrap.
+   -------------------------------------------------------------------------- */
+.messages-stage {
+  height: min(85vh, 680px);
+  background: var(--background);
+  touch-action: pan-y;
+  overflow: visible;
+  /* the square hangs 5rem below the hero; keep the note clear of it */
+  margin-bottom: 6rem;
+}
+
+.messages-card {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: min(22.5rem, calc(100% - 2rem));
+  height: 20.25rem;
+  border: 2px solid var(--foreground);
+  background: var(--background);
+  padding: 1.75rem 2.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.messages-card__eyebrow {
+  margin: 0 0 0.5rem;
+}
+.messages-card__title {
+  font-size: 3.75rem;
+  line-height: 1;
+  margin: 0 0 1rem;
+}
+.messages-card__sub {
+  margin: 0;
+}
+.shape {
+  position: absolute;
+  transform-origin: 0 0;
+  will-change: transform;
+  z-index: 2;
+}
+.shape__persp {
+  perspective: 1000px;
+  width: 100%;
+  height: 100%;
+}
+.shape__inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 700ms cubic-bezier(0.9, 0, 0.1, 1);
+  will-change: transform;
+}
+.shape svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+/* page.tsx: triangle size 80 at bottom-15 left-50, square h-30 at
+   -bottom-20 left-50, circle size 60 at right-50 bottom-2. */
+.shape--circle {
+  width: 60px;
+  height: 60px;
+  right: 12.5rem;
+  bottom: 0.5rem;
+}
+.shape--square {
+  width: 120px;
+  height: 120px;
+  left: 12.5rem;
+  bottom: -5rem;
+}
+.shape--triangle {
+  width: 80px;
+  aspect-ratio: 451.90244 / 440.57476;
+  left: 12.5rem;
+  bottom: 3.75rem;
+}
+@media (max-width: 40rem) {
+  .shape--circle {
+    right: 1rem;
+  }
+  .shape--square,
+  .shape--triangle {
+    left: 1rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Ticket: holographic card with pointer tilt, stamp drop, kickback
+   (exhibit-completion/components/*)
+   -------------------------------------------------------------------------- */
+.ticket-stage {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin-block: 2rem;
+}
+
+.holo {
+  perspective: 800px;
+  display: grid;
+  justify-items: center;
+}
+.holo__card {
+  position: relative;
+  overflow: hidden;
+  width: min(550px, calc(100dvw - 2rem));
+  will-change: transform;
+  transition: scale 200ms ease-out;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.holo__card[data-enter="pending"] {
+  opacity: 0;
+}
+.holo__card:hover {
+  scale: 1.03;
+}
+.holo__card:active {
+  scale: 0.96;
+}
+.holo__content {
+  position: relative;
+}
+.holo__content > img:not(.ticket-stamp),
+.holo__content > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.holo__shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #00e5ff,
+    #ff9500,
+    #ff80fd,
+    #8000ff,
+    #00e5ff,
+    #ff9500,
+    #ff8bda,
+    #9900ff
+  );
+  background-size: 200% 200%;
+  background-position: 50% 50%;
+  mask-image:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      white 15%,
+      transparent 45%,
+      transparent 55%,
+      white 85%,
+      transparent 100%
+    ),
+    var(--holo-mask, none);
+  mask-size: 250% 100%, 100% 100%;
+  mask-composite: intersect;
+  mix-blend-mode: color-dodge;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.holo__glare {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.ticket-stamp {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 13%;
+  height: auto;
+  transform: translate(-50%, -50%) rotate(var(--r, 0deg));
+  pointer-events: none;
+}
+.ticket-stamp[data-pending] {
+  opacity: 0;
+}
+
+.ticket-hint {
+  margin: 0;
+  font-family: var(--font-accent);
+  font-size: 0.85em;
+  opacity: 0;
+  transition: opacity 600ms ease-out;
+}
+.ticket-hint.is-visible {
+  opacity: 0.6;
+}
+
+.stamp-row {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.25rem;
+}
+.stamp-row li {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-accent);
+  font-size: 0.75em;
+  color: var(--muted-foreground);
+}
+.stamp-row img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+/* --------------------------------------------------------------------------
+   Bots: chat bubbles with per-bot nameplate color, beams, petal swarm,
+   click-to-continue hint, Wordle tile reveal, screen glitch, crescendo and
+   pop (bots/main-sequence/*, bots/wordle-glitch/*)
+   -------------------------------------------------------------------------- */
+.bots-stage {
+  min-height: 70vh;
+  padding: 3rem 1.5rem 2rem;
+  display: grid;
+  align-content: center;
+  cursor: pointer;
+}
+.bots-stage__beams {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top right;
+  transform-origin: top right;
+  opacity: 0.3;
+  animation:
+    beamsRotate 11s ease-in-out infinite alternate,
+    beamsOpacity 7s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes beamsRotate {
+  from {
+    transform: rotate(-1.5deg);
+  }
+  to {
+    transform: rotate(1.5deg);
+  }
+}
+@keyframes beamsOpacity {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+.bots-stage__petals {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.bot-chat {
+  position: relative;
+  z-index: 1;
+  width: min(40rem, 100%);
+  margin-inline: auto;
+  display: grid;
+  gap: 1.25rem;
+}
+.bot-msg {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 500ms ease-out,
+    translate 500ms ease-out;
+  transition-delay: var(--delay, 200ms);
+}
+.bot-msg.is-in {
+  opacity: 1;
+  translate: 0 0;
+}
+.bot-msg--right {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+.bot-msg__avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bot);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+.bot-msg__body {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 75%;
+}
+.bot-msg--right .bot-msg__body {
+  justify-items: end;
+}
+.bot-msg__name {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0 0.125rem 0.25rem;
+  border-bottom: 2px solid var(--bot);
+}
+.bot-msg__text {
+  margin: 0;
+  line-height: 1.25rem;
+}
+.bot-msg--cont {
+  margin-top: -0.75rem;
+}
+.bot-msg--cont .bot-msg__avatar {
+  visibility: hidden;
+}
+
+/* WordleLetterReveal: words are flex groups of tiles; each tile flips up
+   (scale-y 0 -> 1) on its own delay. */
+.wordle-text {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.125rem 0.5rem;
+  font-weight: 700;
+}
+.bot-msg--right .wordle-text {
+  justify-content: flex-end;
+}
+.wordle-word {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+.wtile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.5em;
+  min-width: 1.5em;
+  padding-inline: 0.18em;
+  border-radius: 2px;
+  color: #fff;
+  text-transform: uppercase;
+  vertical-align: middle;
+  transform-origin: center;
+  scale: 1 0;
+  opacity: 0;
+  transition:
+    opacity 150ms ease-out,
+    scale 300ms cubic-bezier(0.2, 0.9, 0.3, 1.05);
+  transition-delay: var(--tile-delay, 0ms);
+  pointer-events: none;
+}
+.wordle-text.is-revealed .wtile {
+  scale: 1 1;
+  opacity: 1;
+}
+.wtile--green {
+  background: #6aaa64;
+}
+.wtile--yellow {
+  background: #c9b458;
+}
+.wtile--gray {
+  background: #787c7e;
+}
+.wtile--red {
+  background: #c8382e;
+}
+.wtile--punct {
+  background: none;
+  color: color-mix(in oklab, var(--foreground) 45%, transparent);
+}
+/* Per-tile jitter while the glitch is live; a negative delay staggers the
+   phase, and `translate` composes with the flip's `scale`. */
+.is-glitching .wtile {
+  animation: letterJitter var(--jitter-ms, 160ms) linear var(--jitter-delay, 0ms) infinite;
+  will-change: translate;
+}
+@keyframes letterJitter {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -1px 1px;
+  }
+  50% {
+    translate: 1.5px -1px;
+  }
+  75% {
+    translate: -0.5px -1.5px;
+  }
+}
+/* GlassCrackSprite (behind the red tile) and ExplosionSprite (6x3 sheet,
+   18 frames, played once on top of it). Centers are set by script. */
+.glass-crack {
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  z-index: -1;
+  width: 242px;
+  height: 216px;
+  background: url("assets/bots/wordle/glass-crack.webp") no-repeat 0 0 / 100% 100%;
+  transform: translate(calc(-50% + 10px), -50%) scale(0.5);
+  animation: glassCrackAppear 80ms linear forwards;
+  pointer-events: none;
+}
+@keyframes glassCrackAppear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.explosion {
+  position: absolute;
+  left: var(--cx);
+  top: var(--cy);
+  z-index: 1;
+  width: 72px;
+  height: 101px;
+  background: url("assets/bots/wordle/explosion-sprite-sheet-6x3.png") no-repeat 0 0 / 432px 303px;
+  transform: translate(-50%, -50%) scale(2.2);
+  mix-blend-mode: screen;
+  animation: explosion 900ms step-end forwards;
+  pointer-events: none;
+}
+@keyframes explosion {
+  0% { background-position: 0 0; }
+  5.56% { background-position: -72px 0; }
+  11.11% { background-position: -144px 0; }
+  16.67% { background-position: -216px 0; }
+  22.22% { background-position: -288px 0; }
+  27.78% { background-position: -360px 0; }
+  33.33% { background-position: 0 -101px; }
+  38.89% { background-position: -72px -101px; }
+  44.44% { background-position: -144px -101px; }
+  50% { background-position: -216px -101px; }
+  55.56% { background-position: -288px -101px; }
+  61.11% { background-position: -360px -101px; }
+  66.67% { background-position: 0 -202px; }
+  72.22% { background-position: -72px -202px; }
+  77.78% { background-position: -144px -202px; }
+  83.33% { background-position: -216px -202px; }
+  88.89% { background-position: -288px -202px; }
+  94.44%, 100% { background-position: -360px -202px; }
+}
+
+/* WordleCrescendoOverlay: vignette and red multiply wash driven by
+   --crescendo-progress (progress^3), plus a stepped random shake that the
+   script writes to the chat's `translate`. Fixed to the viewport in the
+   museum; scoped to the stage here. */
+.crescendo {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 220ms linear;
+}
+.crescendo.is-active {
+  opacity: 1;
+}
+.crescendo__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 65%, rgba(0, 0, 0, 0.9) 150%);
+  opacity: calc(var(--crescendo-progress, 0) * 0.75);
+}
+.crescendo__tint {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(140, 10, 10, 0.3) 0%, rgba(170, 0, 0, 0.7) 100%);
+  mix-blend-mode: multiply;
+  opacity: calc(var(--crescendo-progress, 0) * 0.2);
+}
+
+/* BotTurnGroupOverlay pop: a sparse 30px-dash outline around the popped
+   message holds for 100 ms, then fades; each path scales from its center. */
+.pop-outline {
+  position: absolute;
+  z-index: 5;
+  overflow: visible;
+  pointer-events: none;
+  animation: wordleBubbleFade 500ms linear forwards;
+}
+.pop-outline path {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wordleBubbleScale 60ms cubic-bezier(0.2, 0.9, 0.3, 1.05) forwards;
+}
+
+.hint {
+  position: relative;
+  z-index: 1;
+  margin: 3rem 0 0;
+  text-align: center;
+  font-size: 0.875rem;
+  animation: fade-in 500ms ease-out 3000ms both;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
+
+.screen-glitch {
+  animation:
+    screenShake 400ms step-end,
+    screenRumble 240ms ease-in-out 400ms infinite;
+}
+@keyframes screenShake {
+  0% {
+    transform: translate(-15px, 8px);
+  }
+  8% {
+    transform: translate(10px, -5px);
+  }
+  17% {
+    transform: translate(10px, 6px);
+  }
+  26% {
+    transform: translate(-14px, 2px);
+  }
+  35% {
+    transform: translate(8px, -6px);
+  }
+  44% {
+    transform: translate(-6px, 4px);
+  }
+  53% {
+    transform: translate(6px, -2px);
+  }
+  70% {
+    transform: translate(-3px, 2px);
+  }
+  85% {
+    transform: translate(2px, -1px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+@keyframes screenRumble {
+  20% {
+    transform: translate(-1.5px, 1px);
+  }
+  40% {
+    transform: translate(1.5px, -1px);
+  }
+  60% {
+    transform: translate(-1px, -1.5px);
+  }
+  80% {
+    transform: translate(1px, 1.5px);
+  }
+}
+@keyframes wordleBubbleFade {
+  0%,
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes wordleBubbleScale {
+  from {
+    transform: scale(0.85);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Gamers: spotlight vignette with noise, gold/wood frames and placards,
+   folded-corner letter, staggered reveal, scroll-snap strip
+   (gamers/*.module.scss)
+   -------------------------------------------------------------------------- */
+[data-theme="gamers"].exhibit {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
+    linear-gradient(120deg in oklab, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 50%),
+    linear-gradient(60deg in oklab, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%);
+}
+.gamers-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--muted);
+}
+.gamers-bar--top {
+  top: 0;
+}
+.gamers-bar--bottom {
+  bottom: 0;
+}
+
+.gamers-hero {
+  width: fit-content;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background: var(--muted);
+  text-align: center;
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04))
+    drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+}
+.gamers-hero h2 {
+  margin: 0;
+  font-family: var(--font-accent);
+  font-weight: normal;
+  font-size: clamp(3.5rem, 12vw, 6rem);
+  line-height: 1;
+}
+.gamers-hero__by {
+  margin: 1rem 0 0;
+}
+.gamers-hero__by strong {
+  display: block;
+  font-weight: normal;
+  color: var(--primary);
+}
+
+.gallery-strip {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 2rem 1.5rem;
+  scrollbar-width: thin;
+}
+.station {
+  flex: 0 0 min(100% - 3rem, 26rem);
+  scroll-snap-align: center;
+  display: grid;
+  gap: 0.75rem;
+}
+.frame {
+  border-style: solid;
+  border-width: 20px;
+  border-image: url("assets/gamers/gold-square-frame.svg") 27 stretch;
+  aspect-ratio: 4 / 3;
+  background: var(--gamers-surface);
+  display: grid;
+  place-items: center;
+  color: var(--gamers-text-muted);
+  font-family: var(--font-accent);
+  overflow: hidden;
+}
+.frame > img,
+.frame > video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.frame--gold2 {
+  border-image-source: url("assets/gamers/gold-square-frame-2.svg");
+}
+.frame--wood {
+  border-image-source: url("assets/gamers/wood-ish-frame.svg");
+}
+.placard {
+  margin: 0 auto;
+  width: fit-content;
+  padding: 0.45rem 1.25rem;
+  text-align: center;
+  font-size: 0.9em;
+  background: linear-gradient(
+    180deg,
+    var(--gamers-gold-frame-start) 0%,
+    color-mix(in oklab, var(--gamers-gold-frame-start), var(--gamers-gold-frame-end) 50%) 60%,
+    var(--gamers-gold-frame-end) 100%
+  );
+  border-top: 1px solid rgba(199, 158, 79, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(229, 196, 125, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  color: var(--gamers-gold-text);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.9);
+}
+.placard--wood {
+  background: linear-gradient(
+    180deg,
+    var(--gamers-wood-frame-start) 0%,
+    color-mix(in oklab, var(--gamers-wood-frame-start), var(--gamers-wood-frame-end) 50%) 60%,
+    var(--gamers-wood-frame-end) 100%
+  );
+  border-top: 1px solid rgba(160, 90, 44, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(200, 113, 55, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  color: var(--gamers-wood-text);
+}
+
+.folded-corner {
+  position: relative;
+  padding: 1em 1.5em;
+  color: #444;
+  background: #fff;
+  overflow: hidden;
+  width: min(100%, 34rem);
+  margin: 2rem auto;
+}
+.folded-corner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 0;
+  border-width: 0 20px 20px 0;
+  border-style: solid;
+  border-color: #1c1917 #1c1917 #ccc #ccc;
+  background: #fff;
+}
+.folded-corner p {
+  color: inherit;
+}
+
+.reveal-group > * {
+  opacity: 0;
+  transition: opacity 1500ms ease-in-out;
+}
+.reveal-group.is-in > * {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   OC: Word document chrome and the character reveal (oc/components/
+   WordDocumentUi*, RevealContent.module.scss)
+   -------------------------------------------------------------------------- */
+.wdoc {
+  margin-block: 2rem 0;
+  border-block: 2px solid var(--foreground);
+  background: var(--primary);
+}
+.wdoc__bars {
+  border-bottom: 2px solid var(--foreground);
+  background: var(--oc-paper);
+  padding-top: 4px;
+  font-family: var(--font-accent);
+}
+.wdoc__bars-frame {
+  margin: 0 8px 8px;
+  border: 2px solid var(--oc-teal-deep);
+  box-shadow: 4px 4px 0 0 var(--oc-teal-deep);
+}
+.wdoc__bar {
+  border: 2px solid var(--foreground);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  padding: 6px 8px;
+}
+@media (min-width: 64rem) {
+  .wdoc__bar {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+.wdoc__group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.wdoc__chiclet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-header);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+.wdoc__chiclet i {
+  width: 24px;
+  height: 16px;
+  border: 2px solid var(--foreground);
+  background: var(--oc-teal);
+}
+.wdoc__divider {
+  width: 2px;
+  height: 24px;
+  background: var(--foreground);
+}
+.wdoc__select {
+  width: 11.25rem;
+  max-width: 100%;
+  border: 2px solid var(--foreground);
+  background: var(--oc-paper);
+  padding: 3px 6px;
+  font-size: 0.875rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.wdoc__select::after {
+  content: "▾";
+}
+.wdoc__tool {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--foreground);
+  background: var(--oc-paper);
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  padding: 0;
+}
+.wdoc__tool:hover {
+  background: var(--oc-teal-soft);
+}
+.wdoc__tool.is-active {
+  background: var(--accent);
+}
+.wdoc__tool--i {
+  font-style: italic;
+}
+.wdoc__tool--u {
+  text-decoration: underline;
+}
+.wdoc__title {
+  text-align: center;
+  font-family: var(--font-header);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  grid-column: 1 / -1;
+  order: 3;
+}
+@media (min-width: 64rem) {
+  .wdoc__title {
+    grid-column: auto;
+    order: 0;
+  }
+}
+.wdoc__title em {
+  color: var(--foreground);
+}
+.wdoc__title small {
+  font-size: 0.75rem;
+}
+.wdoc__win {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.wdoc__win button {
+  width: 24px;
+  height: 20px;
+  border: 2px solid var(--foreground);
+  background: var(--oc-paper);
+  color: inherit;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+  cursor: not-allowed;
+}
+.wdoc__desk {
+  background: var(--oc-desk);
+  padding: clamp(3rem, 10vw, 12.5rem) 1rem;
+}
+.wdoc__page {
+  position: relative;
+  margin-inline: auto;
+  width: 100%;
+  min-height: 20rem;
+  padding: clamp(1.5rem, 5vw, 3.75rem);
+  background: var(--background);
+  border: 2px solid var(--foreground);
+  box-shadow: 12px 12px 0 0 var(--oc-teal-deep);
+  cursor: text;
+}
+@media (min-width: 64rem) {
+  .wdoc__page {
+    width: 56rem;
+    padding: 6.25rem;
+  }
+}
+@media (min-width: 80rem) {
+  .wdoc__page {
+    width: 64rem;
+    padding: 7.5rem;
+  }
+}
+.wdoc__page h1 {
+  margin-top: 0;
+}
+
+.reveal-char {
+  opacity: 0;
+  font-size: inherit;
+  font-family: inherit;
+  pointer-events: none;
+}
+.reveal-char.is-revealed {
+  opacity: 1;
+  pointer-events: auto;
+}
+.reveal-block {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease-out;
+}
+.reveal-block.is-revealed {
+  opacity: 1;
+  pointer-events: auto;
+}
+.reveal-border {
+  position: relative;
+}
+.reveal-border::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: round(var(--reveal-height, 0px), 1lh);
+  background: var(--accent);
+}
+.reveal-border.is-complete::before {
+  height: 100%;
+}
+.reveal-cursor {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  vertical-align: -0.15em;
+  background: currentColor;
+  margin-left: 3px;
+  pointer-events: none;
+  animation: revealCursorBlink 1.25s step-end infinite;
+}
+@keyframes revealCursorBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Dub: projected title card (gate weave + flicker), film strip, grain and
+   speckle overlays, quote projections (dub/components/*)
+   -------------------------------------------------------------------------- */
+[data-theme="dub"].exhibit {
+  position: relative;
+  isolation: isolate;
+}
+.film-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  overflow: hidden;
+}
+.film-grain--noise {
+  opacity: 0.1;
+}
+.film-grain--speckle {
+  opacity: 0.2;
+}
+.film-grain__noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/dub/noise-sprite.webp");
+  background-repeat: repeat;
+  filter: contrast(2);
+  animation: noise-cycle 1s steps(9) infinite;
+}
+@keyframes noise-cycle {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -2430px;
+  }
+}
+.film-grain__speckle {
+  position: absolute;
+  inset: 0;
+  background-image: url("assets/dub/speckle-sprite.png");
+  background-repeat: repeat-y;
+  background-position: center 0;
+  animation: speckle-cycle 3s steps(30) infinite;
+}
+@keyframes speckle-cycle {
+  from {
+    background-position: center 0;
+  }
+  to {
+    background-position: center -32400px;
+  }
+}
+
+.projected {
+  position: relative;
+  animation:
+    filmGateWeave 15s steps(1, end) infinite,
+    filmGateWeave 3s infinite;
+}
+.projected__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--primary);
+  pointer-events: none;
+  animation: projectionFlicker 3s ease-in-out infinite;
+}
+.projected--subtle .projected__bg {
+  animation-name: projectionFlickerSubtle;
+}
+.projected > :not(.projected__bg) {
+  position: relative;
+  color: var(--primary-foreground);
+}
+@keyframes filmGateWeave {
+  0% { transform: translate(0, 0); }
+  4% { transform: translate(0.1px, -1.4px); }
+  8% { transform: translate(-0.1px, 0.3px); }
+  12% { transform: translate(0, -0.2px); }
+  16% { transform: translate(0.2px, 0.6px); }
+  20% { transform: translate(-0.1px, -1.1px); }
+  24% { transform: translate(0, 0.1px); }
+  28% { transform: translate(0.1px, -0.4px); }
+  32% { transform: translate(0, 0.8px); }
+  36% { transform: translate(-0.2px, -0.6px); }
+  40% { transform: translate(0, 0); }
+  44% { transform: translate(0.1px, -1.6px); }
+  48% { transform: translate(0, 0.4px); }
+  52% { transform: translate(-0.1px, -0.3px); }
+  56% { transform: translate(0, 0.9px); }
+  60% { transform: translate(0.1px, -0.7px); }
+  64% { transform: translate(0, 0.2px); }
+  68% { transform: translate(-0.1px, -1.2px); }
+  72% { transform: translate(0.2px, 0.5px); }
+  76% { transform: translate(0, -0.1px); }
+  80% { transform: translate(-0.1px, 0.7px); }
+  84% { transform: translate(0, -0.9px); }
+  88% { transform: translate(0.1px, 0.3px); }
+  92% { transform: translate(0, -0.5px); }
+  96% { transform: translate(-0.1px, 0.1px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes projectionFlicker {
+  0%, 100% { opacity: 0.88; filter: blur(12px) brightness(1); }
+  15% { opacity: 0.92; filter: blur(14px) brightness(1.02); }
+  40% { opacity: 0.85; filter: blur(11px) brightness(0.97); }
+  65% { opacity: 0.9; filter: blur(13px) brightness(1.01); }
+  80% { opacity: 0.86; filter: blur(12px) brightness(0.99); }
+}
+@keyframes projectionFlickerSubtle {
+  0%, 100% { opacity: 0.9; filter: blur(8px) brightness(1); }
+  15% { opacity: 0.91; filter: blur(8.5px) brightness(1.01); }
+  40% { opacity: 0.895; filter: blur(7px) brightness(0.985); }
+  65% { opacity: 0.905; filter: blur(7.5px) brightness(1.005); }
+  80% { opacity: 0.895; filter: blur(8px) brightness(0.995); }
+}
+
+.film-strip-wrap {
+  padding: 2.5rem 0;
+}
+.film-strip {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border: 40px dashed var(--foreground);
+  border-inline-style: none;
+}
+@media (min-width: 48rem) {
+  .film-strip {
+    grid-template-columns: 1fr minmax(0, 80vw) 1fr;
+    gap: 2.5rem;
+    padding: 2.5rem;
+    border-width: 80px;
+  }
+}
+.film-strip__rail {
+  background: var(--foreground);
+  border-radius: 1.5rem;
+  min-height: 2rem;
+}
+.film-strip__cell {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+.dub-title {
+  padding: 2.5rem 3rem;
+  text-align: center;
+  font-family: var(--font-header);
+}
+.dub-title__eyebrow {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-accent);
+}
+.dub-title h2 {
+  margin: 0;
+  font-size: clamp(3rem, 10vw, 5rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.quote-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-block: 2rem;
+}
+.quote-projection {
+  max-width: 22.5rem;
+  padding: 1.5rem;
+}
+@media (min-width: 48rem) {
+  .quote-projection {
+    padding: 2.5rem;
+  }
+}
+.quote-projection blockquote {
+  margin: 0;
+  font-style: italic;
+}
+.quote-projection figcaption {
+  margin: 1.25rem 0 0 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Lowlights: awards-show hero, limo, body column, cardboard box, speech
+   bubbles, wiggle / vibrate / funk (lowlights/*.module.scss)
+   -------------------------------------------------------------------------- */
+.ll-stage {
+  overflow: visible;
+  padding-top: 1rem;
+}
+.ll-card {
+  position: relative;
+  z-index: 2;
+  width: min(25rem, calc(100% - 2rem));
+  height: 17.5rem;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  border: 8px solid var(--primary-foreground);
+  background: var(--primary) url("assets/lowlights/gradient.webp") top / 100vw 100vh;
+  background-blend-mode: screen;
+  color: var(--primary-foreground);
+  font-family: "Footlight MT Light", var(--font-header), serif;
+  padding: 0.75rem 1rem;
+  animation: wiggle 5s ease-in-out infinite;
+}
+.ll-card__exhibit {
+  grid-area: 1 / 1;
+  color: #fff;
+  margin: 0;
+}
+.ll-card__title {
+  grid-area: 2 / 1 / 3 / 4;
+  align-self: center;
+  text-align: center;
+  margin: 0;
+  font-size: 3rem;
+  font-weight: normal;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+}
+.ll-card__tag {
+  grid-area: 3 / 2 / 4 / 4;
+  align-self: end;
+  text-align: right;
+  color: #fff;
+  font-size: 0.875rem;
+  margin: 0;
+}
+.ll-limo {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 36rem);
+  margin: 0 auto -5rem;
+  animation: vibrate 0.1s linear infinite;
+}
+.ll-body {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 44rem);
+  margin: 0 auto;
+  padding: 7rem 1.5rem 3rem;
+  border-inline: 4px solid var(--accent);
+  background: var(--accent-foreground);
+  color: var(--lowlights-cream);
+  font-size: 1.125rem;
+  text-align: center;
+}
+.ll-body .todo {
+  color: var(--lowlights-cream);
+  border-color: rgba(255, 255, 255, 0.35);
+  text-align: left;
+}
+.ll-logo {
+  width: min(100%, 22rem);
+  margin: 0 auto 2rem;
+}
+
+.ll-link {
+  display: grid;
+  justify-items: center;
+  gap: 2.5rem;
+  padding: 2rem 0 1rem;
+}
+.bubble-top {
+  position: relative;
+  background: #fff;
+  color: #1f2937;
+  padding: 0.5rem 0.75rem;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1)) drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+  animation:
+    rectangleFunk 3s steps(1, jump-end) infinite,
+    popIn 200ms ease-out;
+}
+.bubble-top::after {
+  --size: 18px;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: calc(var(--size) * 2) solid transparent;
+  border-top-color: #fff;
+  border-bottom: 0;
+  border-left: 0;
+  margin-left: calc(var(--size) * -1);
+  margin-bottom: calc(var(--size) * -2);
+}
+.ll-box {
+  width: min(60%, 18rem);
+  animation: breathe 3s ease-in-out infinite;
+}
+.dumpy {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 2rem 0;
+}
+.dumpy__figure {
+  width: 200px;
+  height: 200px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--lowlights-gold);
+  color: var(--lowlights-deep-crimson);
+  font-family: var(--font-header);
+  animation:
+    breathe 3s ease-in-out infinite,
+    vibrate 0.1s linear infinite;
+}
+.bubble-right {
+  position: relative;
+  min-height: 3.5rem;
+  min-width: 16rem;
+  max-width: 20rem;
+  background: #fff;
+  color: #1f2937;
+  padding: 0.5rem;
+  animation: rectangleFunk 3s steps(1, jump-end) infinite;
+}
+.bubble-right.is-pop {
+  animation:
+    rectangleFunk 3s steps(1, jump-end) infinite,
+    popIn 200ms ease-out;
+}
+.bubble-right::after {
+  --size: 16px;
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border: calc(var(--size) * 2) solid transparent;
+  border-right-color: #fff;
+  border-left: 0;
+  border-top: 0;
+  margin-top: -16px;
+  margin-left: -32px;
+}
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(1deg);
+  }
+}
+@keyframes vibrate {
+  0%,
+  100% {
+    transform: translateX(1px);
+  }
+  50% {
+    transform: translateX(-1px);
+  }
+}
+@keyframes rectangleFunk {
+  0%,
+  100% {
+    transform: skew(3deg) perspective(25cm) rotateY(-3deg) rotateZ(-1deg);
+  }
+  33% {
+    transform: skew(-10deg) perspective(8cm) rotateY(4deg) rotateZ(1.5deg);
+  }
+  66% {
+    transform: skew(7deg) perspective(2cm) rotateY(-2deg) rotateZ(1deg);
+  }
+}
+@keyframes popIn {
+  0% {
+    scale: 1;
+  }
+  40% {
+    scale: 1.07;
+  }
+  100% {
+    scale: 1;
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.03;
+  }
+}
+@keyframes swingYFrames {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 5px;
+  }
+}
+@keyframes swingXYFrames {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: 3px 5px;
+  }
+  50% {
+    translate: 6px 0;
+  }
+  75% {
+    translate: 3px 5px;
+  }
+}
+@keyframes swingNegativeXYFrames {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -3px 5px;
+  }
+  50% {
+    translate: -6px 0;
+  }
+  75% {
+    translate: -3px 5px;
+  }
+}
+
+/* SlideDeck: cardboard wall under a 50% gray overlay blend, curtains hung
+   past the edges, a spotlight gradient on top of everything. */
+.diorama {
+  height: min(85vh, 720px);
+  margin-top: 0;
+  background:
+    linear-gradient(90deg, rgba(128, 128, 128, 0.5) 0%, rgba(128, 128, 128, 0.5) 100%),
+    url("assets/lowlights/cardboard-background-1.webp") center / cover no-repeat;
+  background-blend-mode: overlay;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.diorama__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  padding: 10rem 8rem 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 3rem 4rem;
+}
+.diorama__title {
+  margin: 0;
+  color: #fff;
+  font-size: 3rem;
+  font-weight: 700;
+  font-style: italic;
+  font-family: var(--font-header);
+  text-align: center;
+}
+.funky {
+  animation: rectangleFunk 3s steps(1, jump-end) infinite;
+}
+.diorama .dumpy {
+  margin: 0;
+  flex-wrap: nowrap;
+}
+.diorama__curtain {
+  position: absolute;
+  top: -5rem;
+  z-index: 3;
+  height: 130%;
+  width: auto;
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.16)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.4));
+  pointer-events: none;
+}
+.diorama__curtain--left {
+  left: -2.5rem;
+  animation: swingXYFrames 10s ease-in-out infinite;
+}
+.diorama__curtain--right {
+  right: -2.5rem;
+  animation: swingNegativeXYFrames 10s ease-in-out infinite;
+}
+.diorama__valance {
+  position: absolute;
+  top: -6.25rem;
+  right: 0;
+  width: max(100%, 2560px);
+  height: auto;
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.16)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.4));
+  pointer-events: none;
+}
+.diorama__valance--front {
+  z-index: 4;
+  animation: swingYFrames 5s ease-in-out infinite;
+}
+.diorama__valance--back {
+  z-index: 3;
+  animation: swingYFrames 5s ease-in-out -2.5s infinite;
+}
+.diorama__spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background:
+    linear-gradient(120deg, rgba(0, 0, 0, 0.7) 0%, transparent 50%),
+    linear-gradient(60deg, transparent 50%, rgba(0, 0, 0, 0.7) 100%);
+  pointer-events: none;
+}
+@media (max-width: 48rem) {
+  .diorama__curtain,
+  .diorama__valance,
+  .diorama__spotlight {
+    display: none;
+  }
+  .diorama__content {
+    padding: 3rem 1.5rem;
+  }
+  .diorama__title {
+    font-size: 2rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   You: live pixelated vortex sphere (whid10-vortex.js), recording slot,
+   one tilting card
+   -------------------------------------------------------------------------- */
+.you-stage {
+  height: min(80vh, 720px);
+  background: var(--background);
+  display: grid;
+  place-items: center;
+}
+.you-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.you-stage__overlay {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}
+.you-stage__overlay h2 {
+  font-size: clamp(3rem, 12vw, 6rem);
+  margin: 0;
+}
+.you-stage__overlay p {
+  font-family: var(--font-subheader);
+  font-style: normal;
+  font-size: 1.5rem;
+  margin: 0;
+}
+.you-media {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+  align-items: center;
+  margin-block: 2rem;
+}
+@media (min-width: 48rem) {
+  .you-media {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+.you-recording {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  color: var(--muted-foreground);
+  font-family: var(--font-accent);
+  font-style: normal;
+}
+.holo--card {
+  perspective: 800px;
+}
+.holo--card .holo__card {
+  width: min(220px, 100%);
+  aspect-ratio: 2 / 3.5;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #2a1745, #0d0712);
+  border: 1px solid var(--border);
+}
+.holo--card .holo__content {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-header);
+  font-style: normal;
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion: freeze every ambient animation.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .whid-logo__conic,
+  .gradient-text,
+  .conic-button,
+  .bots-stage__beams,
+  .projected,
+  .projected__bg,
+  .film-grain__noise,
+  .film-grain__speckle,
+  .ll-card,
+  .ll-limo,
+  .bubble-top,
+  .bubble-right,
+  .ll-box,
+  .dumpy__figure,
+  .diorama__title,
+  .diorama__curtain,
+  .diorama__valance,
+  .is-glitching .wtile,
+  .reveal-cursor {
+    animation: none;
+  }
+  .shape__inner,
+  .bot-msg,
+  .wtile,
+  .reveal-group > * {
+    transition: none;
+  }
+}

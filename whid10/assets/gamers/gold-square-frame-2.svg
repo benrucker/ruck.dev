@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Second square-frame option, extracted from gold-frames-set.svg
+  (by Chrisdesign, Openclipart, public domain).
+  Source: https://openclipart.org/detail/19331/gold-frames-set-by-chrisdesign-19331
+  Flattened so the frame fills the viewBox, for use as a CSS border-image.
+-->
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 163 163"
+  >
+  <defs>
+    <linearGradient id="goldStops">
+      <stop style="stop-color:#480c00" offset="0" />
+      <stop style="stop-color:#743800" offset=".69328" />
+      <stop style="stop-color:#ecd450" offset=".76570" />
+      <stop style="stop-color:#a06400" offset=".91558" />
+      <stop style="stop-color:#e8cc48" offset=".96003" />
+      <stop style="stop-color:#480c00" offset="1" />
+    </linearGradient>
+    <linearGradient
+        id="gradSides"
+        xlink:href="#goldStops"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="matrix(.62887 0 0 3.5356 -11054 -6317.7)"
+        x1="2231.6" y1="547.72" x2="-199.25" y2="547.72"
+    />
+    <linearGradient
+        id="gradTopBottom"
+        xlink:href="#goldStops"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="matrix(0 .62887 -3.5356 0 -8168 -5889.6)"
+        x1="2231.6" y1="547.72" x2="-199.25" y2="547.72"
+    />
+  </defs>
+  <g transform="matrix(0.060143 0 0 0.060143 602.7 361.0)">
+    <g transform="translate(1158.1 11.939)">
+      <path
+          style="fill:url(#gradSides)"
+          d="m-11179-6014.9l450 444v1820.3l-450 444v-2708.3z"
+      />
+      <path
+          style="fill:url(#gradTopBottom)"
+          d="m-8470.8-6014.9l-444 450.2h-1820.2l-444-450.2h2708.2z"
+      />
+    </g>
+    <g transform="matrix(-1 0 0 -1 -18492 -9309.5)">
+      <path
+          style="fill:url(#gradSides)"
+          d="m-11179-6014.9l450 444v1820.3l-450 444v-2708.3z"
+      />
+      <path
+          style="fill:url(#gradTopBottom)"
+          d="m-8470.8-6014.9l-444 450.2h-1820.2l-444-450.2h2708.2z"
+      />
+    </g>
+  </g>
+</svg>

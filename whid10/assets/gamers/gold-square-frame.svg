@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Single square frame extracted from gold-frames-set.svg (by Chrisdesign, Openclipart, public domain).
+  Source: https://openclipart.org/detail/19331/gold-frames-set-by-chrisdesign-19331
+  Flattened so the frame fills the viewBox, for use as a CSS border-image.
+-->
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 163 163"
+  >
+  <defs>
+    <linearGradient id="goldStops">
+      <stop style="stop-color:#480c00" offset="0" />
+      <stop style="stop-color:#642800" offset=".69328" />
+      <stop style="stop-color:#ecd450" offset=".72343" />
+      <stop style="stop-color:#8c5000" offset=".73622" />
+      <stop style="stop-color:#e4c844" offset=".88274" />
+      <stop style="stop-color:#703400" offset=".94375" />
+      <stop style="stop-color:#e8cc48" offset=".97130" />
+      <stop style="stop-color:#480c00" offset="1" />
+    </linearGradient>
+    <linearGradient
+        id="gradLeft"
+        xlink:href="#goldStops"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="matrix(.62887 0 0 3.5356 -11054 -3041.4)"
+        x1="2207.8" y1="699.68" x2="-199.25" y2="699.68"
+    />
+    <linearGradient
+        id="gradTop"
+        xlink:href="#goldStops"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="matrix(0 .62887 -3.5356 0 -8168.1 -2613.4)"
+        x1="2224.7" y1="699.68" x2="-199.25" y2="699.68"
+    />
+    <linearGradient
+        id="gradRight"
+        xlink:href="#goldStops"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="matrix(.62887 0 0 3.5356 -11054 -3041.4)"
+        x1="2231.7" y1="699.68" x2="-199.33" y2="699.68"
+    />
+    <linearGradient
+        id="gradBottom"
+        xlink:href="#goldStops"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="matrix(0 .62887 -3.5356 0 -8168.1 -2613.4)"
+        x1="2223.7" y1="699.68" x2="-199.25" y2="699.68"
+    />
+  </defs>
+  <g transform="matrix(0.060143 0 0 0.060143 672.3 164.7)">
+    <g>
+      <path
+          style="fill:url(#gradLeft)"
+          d="m-11179-2738.7l450 444v1820.4l-450 443.95v-2708.4z"
+      />
+      <path
+          style="fill:url(#gradTop)"
+          d="m-8470.9-2738.7l-444 450.2h-1820.1l-444-450.2h2708.1z"
+      />
+    </g>
+    <g transform="matrix(-1 0 0 -1 -19650 -2769)">
+      <path
+          style="fill:url(#gradRight)"
+          d="m-11179-2738.7l450 444v1820.4l-450 443.95v-2708.4z"
+      />
+      <path
+          style="fill:url(#gradBottom)"
+          d="m-8470.9-2738.7l-444 450.2h-1820.1l-444-450.2h2708.1z"
+      />
+    </g>
+  </g>
+</svg>
