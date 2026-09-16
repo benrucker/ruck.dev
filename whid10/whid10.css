@@ -645,10 +645,37 @@ canvas {
    -------------------------------------------------------------------------- */
 .exhibit {
   padding: clamp(4rem, 10vh, 8rem) 1.5rem;
+  /* No exhibit should read as a sliver between two seams: every one stands at
+     least four fifths of the window tall, and anything shorter than that sits
+     centred in the space rather than hugging the seam above it. svh (the
+     small viewport height) keeps the floor honest on phones, where a vh-based
+     one would be measured against a chrome-less window the reader never has.
+     Tall exhibits are untouched — this is a floor, not a height. */
+  min-height: 80vh;
+  min-height: 80svh;
+  /* A single-column grid rather than a column flexbox: `margin-inline: auto`
+     on a flex item stops it stretching and lets it size to its own content,
+     which let the takeaways screenshot (961px wide, meant to scroll inside
+     its figure) push the whole phone column wider than the screen. A grid
+     track is the definite width the children are measured against. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
 }
 
 .exhibit__inner {
-  max-width: 68ch;
+  /* 68ch is the museum's measure, but a `ch` swings well over 100px between
+     the themes' faces (712px under General Sans, 879px under Fraunces), so
+     the column jumped width from one exhibit to the next. The rem cap keeps
+     every exhibit on the same measure. */
+  max-width: min(68ch, 46rem);
+  /* An explicit width, not the auto one a block box would have taken: as a
+     grid item, `margin-inline: auto` turns off the stretch, and an auto width
+     then lets a wide child (the takeaways screenshot, which is meant to
+     scroll inside its own figure) size the column instead of the column
+     sizing it. 100% of the track keeps the measure the section's, and the
+     auto margins still centre whatever the max-width leaves over. */
+  width: 100%;
   margin-inline: auto;
 }
 
@@ -693,29 +720,18 @@ canvas {
   width: 100%;
   border-radius: var(--radius);
 }
-
-/* Type specimen. Verifies every theme's three font roles render. Delete
-   this block and the .specimen markup once fonts are confirmed. */
-.specimen {
-  display: grid;
-  gap: 0.5rem;
-  margin-block: 2rem;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--muted);
-  color: var(--foreground);
-}
-.specimen > span {
-  display: block;
-  font-size: 1.5em;
-  line-height: 1.2;
-}
-.specimen > small {
-  color: var(--muted-foreground);
-  font-family: ui-monospace, monospace;
-  font-size: 0.7rem;
-  font-style: normal;
+/* The takeaways are a 961px-wide screenshot of a message. Squeezed into a
+   phone column it renders at about a third of its size and the list is no
+   longer readable, so let the figure scroll and keep the image full size. */
+@media (max-width: 48rem) {
+  .hot-takes {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .hot-takes img {
+    width: auto;
+    max-width: none;
+  }
 }
 
 /* Sticky nav (plain links; stamp icons are optional polish) */
@@ -1027,17 +1043,33 @@ canvas {
 
 /* --------------------------------------------------------------------------
    Messages: bordered title card, three primary shapes that dart, pivot and
-   reflect away from the pointer (messages/components/*). The hero is
-   overflow-visible in the museum, so shapes may leave the stage before
-   they wrap.
+   reflect away from the pointer (messages/components/*). The copy calls them
+   "the shapes in the background", so that is what they are here: a layer
+   over the whole section rather than a band the copy has to start below,
+   the same shape as the bots beams and petals.
    -------------------------------------------------------------------------- */
+[data-theme="messages"].exhibit {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+}
+[data-theme="messages"] .exhibit__inner {
+  position: relative;
+  z-index: 1;
+}
 .messages-stage {
-  height: min(85vh, 680px);
-  background: var(--background);
-  touch-action: pan-y;
+  /* Stretched over the section and inert: only the shapes take the pointer,
+     so the copy stays selectable and the videos stay clickable, and the copy
+     starts straight after the exhibit's own padding with no band above it.
+     whid10.js wraps a shape once it is fully outside the stage's rect, which
+     is now this same box, so the section's clip hides every shape before it
+     jumps rather than cutting one off mid-wander. */
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
   overflow: visible;
-  /* the square hangs 5rem below the hero; keep the note clear of it */
-  margin-bottom: 6rem;
+  pointer-events: none;
 }
 
 .shape {
@@ -1045,6 +1077,10 @@ canvas {
   transform-origin: 0 0;
   will-change: transform;
   z-index: 2;
+  /* The stage layer is pointer-events: none; the shapes are the one part of
+     it that answers the pointer. */
+  pointer-events: auto;
+  touch-action: pan-y;
 }
 .shape__persp {
   perspective: 1000px;
@@ -1064,32 +1100,53 @@ canvas {
   overflow: visible;
 }
 /* page.tsx: triangle size 80 at bottom-15 left-50, square h-30 at
-   -bottom-20 left-50, circle size 60 at right-50 bottom-2. */
+   -bottom-20 left-50, circle size 60 at right-50 bottom-2 — the museum's
+   offsets are measured from the foot of a full-height hero. Same sizes and
+   the same arrangement (triangle over square on a shared left edge, circle
+   off to the right and lower) parked in the gutters instead: the copy column
+   is 722px, so 50% minus 32rem/28rem lands them just clear of it, and the
+   1.5rem floor is the exhibit's own side padding for when the gutter runs
+   out. */
 .shape--circle {
   width: 60px;
   height: 60px;
-  right: 12.5rem;
-  bottom: 0.5rem;
+  right: max(1.5rem, calc(50% - 28rem));
+  top: 22rem;
 }
 .shape--square {
   width: 120px;
   height: 120px;
-  left: 12.5rem;
-  bottom: -5rem;
+  left: max(1.5rem, calc(50% - 32rem));
+  top: 12rem;
 }
 .shape--triangle {
   width: 80px;
   aspect-ratio: 451.90244 / 440.57476;
-  left: 12.5rem;
-  bottom: 3.75rem;
+  left: max(1.5rem, calc(50% - 32rem));
+  top: 6rem;
 }
-@media (max-width: 40rem) {
-  .shape--circle {
-    right: 1rem;
+/* 68rem is where the gutter stops being wide enough for the 120px square to
+   sit beside the copy. Below it the shapes pass behind the text, so take
+   them down to 0.7 size and fade them back far enough that the text still
+   reads over them. The triangle also moves up clear of the copy. */
+@media (max-width: 68rem) {
+  .messages-stage {
+    opacity: 0.55;
   }
-  .shape--square,
   .shape--triangle {
-    left: 1rem;
+    width: 56px;
+    top: 3.5rem;
+  }
+  .shape--square {
+    width: 84px;
+    height: 84px;
+    /* clear of the copy too, or only its bottom edge shows and it reads
+       as a stray bar rather than something behind the text */
+    top: 15.5rem;
+  }
+  .shape--circle {
+    width: 42px;
+    height: 42px;
   }
 }
 
@@ -1112,7 +1169,9 @@ canvas {
 .holo__card {
   position: relative;
   overflow: hidden;
-  width: min(550px, calc(100dvw - 2rem));
+  /* .exhibit's side padding is 1.5rem a side, so 3rem: with 2rem the card
+     was 16px wider than its column and sat off-centre on a phone. */
+  width: min(550px, calc(100dvw - 3rem));
   will-change: transform;
   transition: scale 200ms ease-out;
   cursor: pointer;
@@ -1226,20 +1285,23 @@ canvas {
 }
 
 /* --------------------------------------------------------------------------
-   Bots: chat bubbles with per-bot nameplate color, beams, petal swarm,
-   click-to-continue hint, Wordle tile reveal, screen glitch, crescendo and
-   pop (bots/main-sequence/*, bots/wordle-glitch/*)
+   Bots: light beams behind the exhibit and the cherry-blossom petal swarm
+   over it (CherryBlossomPetals on a 2D canvas). The chat sequence itself is
+   shown as recordings in the copy.
    -------------------------------------------------------------------------- */
-.bots-stage {
-  min-height: 70vh;
-  padding: 3rem 1.5rem 2rem;
-  display: grid;
-  align-content: center;
-  cursor: pointer;
+[data-theme="bots"].exhibit {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
 }
-.bots-stage__beams {
+[data-theme="bots"] .exhibit__inner {
+  position: relative;
+  z-index: 1;
+}
+.bots-beams {
   position: absolute;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1267,265 +1329,13 @@ canvas {
     opacity: 0.4;
   }
 }
-.bots-stage__petals {
+.bots-petals {
   position: absolute;
   inset: 0;
+  z-index: 2;
   width: 100%;
   height: 100%;
   pointer-events: none;
-}
-
-.bot-chat {
-  position: relative;
-  z-index: 1;
-  width: min(40rem, 100%);
-  margin-inline: auto;
-  display: grid;
-  gap: 1.25rem;
-}
-.bot-msg {
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-start;
-  opacity: 0;
-  translate: 0 8px;
-  transition:
-    opacity 500ms ease-out,
-    translate 500ms ease-out;
-  transition-delay: var(--delay, 200ms);
-}
-.bot-msg.is-in {
-  opacity: 1;
-  translate: 0 0;
-}
-.bot-msg--right {
-  flex-direction: row-reverse;
-  text-align: right;
-}
-.bot-msg__avatar {
-  flex: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--bot);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-weight: 600;
-  font-size: 0.9em;
-}
-.bot-msg__body {
-  display: grid;
-  gap: 0.35rem;
-  max-width: 75%;
-}
-.bot-msg--right .bot-msg__body {
-  justify-items: end;
-}
-.bot-msg__name {
-  display: inline-block;
-  font-size: 0.75rem;
-  padding: 0 0.125rem 0.25rem;
-  border-bottom: 2px solid var(--bot);
-}
-.bot-msg__text {
-  margin: 0;
-  line-height: 1.25rem;
-}
-.bot-msg--cont {
-  margin-top: -0.75rem;
-}
-.bot-msg--cont .bot-msg__avatar {
-  visibility: hidden;
-}
-
-/* WordleLetterReveal: words are flex groups of tiles; each tile flips up
-   (scale-y 0 -> 1) on its own delay. */
-.wordle-text {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.125rem 0.5rem;
-  font-weight: 700;
-}
-.bot-msg--right .wordle-text {
-  justify-content: flex-end;
-}
-.wordle-word {
-  display: flex;
-  align-items: center;
-  gap: 0.125rem;
-}
-.wtile {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.5em;
-  min-width: 1.5em;
-  padding-inline: 0.18em;
-  border-radius: 2px;
-  color: #fff;
-  text-transform: uppercase;
-  vertical-align: middle;
-  transform-origin: center;
-  scale: 1 0;
-  opacity: 0;
-  transition:
-    opacity 150ms ease-out,
-    scale 300ms cubic-bezier(0.2, 0.9, 0.3, 1.05);
-  transition-delay: var(--tile-delay, 0ms);
-  pointer-events: none;
-}
-.wordle-text.is-revealed .wtile {
-  scale: 1 1;
-  opacity: 1;
-}
-.wtile--green {
-  background: #6aaa64;
-}
-.wtile--yellow {
-  background: #c9b458;
-}
-.wtile--gray {
-  background: #787c7e;
-}
-.wtile--red {
-  background: #c8382e;
-}
-.wtile--punct {
-  background: none;
-  color: color-mix(in oklab, var(--foreground) 45%, transparent);
-}
-/* Per-tile jitter while the glitch is live; a negative delay staggers the
-   phase, and `translate` composes with the flip's `scale`. */
-.is-glitching .wtile {
-  animation: letterJitter var(--jitter-ms, 160ms) linear var(--jitter-delay, 0ms) infinite;
-  will-change: translate;
-}
-@keyframes letterJitter {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  25% {
-    translate: -1px 1px;
-  }
-  50% {
-    translate: 1.5px -1px;
-  }
-  75% {
-    translate: -0.5px -1.5px;
-  }
-}
-/* GlassCrackSprite (behind the red tile) and ExplosionSprite (6x3 sheet,
-   18 frames, played once on top of it). Centers are set by script. */
-.glass-crack {
-  position: absolute;
-  left: var(--cx);
-  top: var(--cy);
-  z-index: -1;
-  width: 242px;
-  height: 216px;
-  background: url("assets/bots/wordle/glass-crack.webp") no-repeat 0 0 / 100% 100%;
-  transform: translate(calc(-50% + 10px), -50%) scale(0.5);
-  animation: glassCrackAppear 80ms linear forwards;
-  pointer-events: none;
-}
-@keyframes glassCrackAppear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-.explosion {
-  position: absolute;
-  left: var(--cx);
-  top: var(--cy);
-  z-index: 1;
-  width: 72px;
-  height: 101px;
-  background: url("assets/bots/wordle/explosion-sprite-sheet-6x3.png") no-repeat 0 0 / 432px 303px;
-  transform: translate(-50%, -50%) scale(2.2);
-  mix-blend-mode: screen;
-  animation: explosion 900ms step-end forwards;
-  pointer-events: none;
-}
-@keyframes explosion {
-  0% { background-position: 0 0; }
-  5.56% { background-position: -72px 0; }
-  11.11% { background-position: -144px 0; }
-  16.67% { background-position: -216px 0; }
-  22.22% { background-position: -288px 0; }
-  27.78% { background-position: -360px 0; }
-  33.33% { background-position: 0 -101px; }
-  38.89% { background-position: -72px -101px; }
-  44.44% { background-position: -144px -101px; }
-  50% { background-position: -216px -101px; }
-  55.56% { background-position: -288px -101px; }
-  61.11% { background-position: -360px -101px; }
-  66.67% { background-position: 0 -202px; }
-  72.22% { background-position: -72px -202px; }
-  77.78% { background-position: -144px -202px; }
-  83.33% { background-position: -216px -202px; }
-  88.89% { background-position: -288px -202px; }
-  94.44%, 100% { background-position: -360px -202px; }
-}
-
-/* WordleCrescendoOverlay: vignette and red multiply wash driven by
-   --crescendo-progress (progress^3), plus a stepped random shake that the
-   script writes to the chat's `translate`. Fixed to the viewport in the
-   museum; scoped to the stage here. */
-.crescendo {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 220ms linear;
-}
-.crescendo.is-active {
-  opacity: 1;
-}
-.crescendo__vignette {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 65%, rgba(0, 0, 0, 0.9) 150%);
-  opacity: calc(var(--crescendo-progress, 0) * 0.75);
-}
-.crescendo__tint {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, rgba(140, 10, 10, 0.3) 0%, rgba(170, 0, 0, 0.7) 100%);
-  mix-blend-mode: multiply;
-  opacity: calc(var(--crescendo-progress, 0) * 0.2);
-}
-
-/* BotTurnGroupOverlay pop: a sparse 30px-dash outline around the popped
-   message holds for 100 ms, then fades; each path scales from its center. */
-.pop-outline {
-  position: absolute;
-  z-index: 5;
-  overflow: visible;
-  pointer-events: none;
-  animation: wordleBubbleFade 500ms linear forwards;
-}
-.pop-outline path {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: wordleBubbleScale 60ms cubic-bezier(0.2, 0.9, 0.3, 1.05) forwards;
-}
-
-.hint {
-  position: relative;
-  z-index: 1;
-  margin: 3rem 0 0;
-  text-align: center;
-  font-size: 0.875rem;
-  animation: fade-in 500ms ease-out 3000ms both;
 }
 @keyframes fade-in {
   from {
@@ -1533,75 +1343,6 @@ canvas {
   }
   to {
     opacity: 0.4;
-  }
-}
-
-.screen-glitch {
-  animation:
-    screenShake 400ms step-end,
-    screenRumble 240ms ease-in-out 400ms infinite;
-}
-@keyframes screenShake {
-  0% {
-    transform: translate(-15px, 8px);
-  }
-  8% {
-    transform: translate(10px, -5px);
-  }
-  17% {
-    transform: translate(10px, 6px);
-  }
-  26% {
-    transform: translate(-14px, 2px);
-  }
-  35% {
-    transform: translate(8px, -6px);
-  }
-  44% {
-    transform: translate(-6px, 4px);
-  }
-  53% {
-    transform: translate(6px, -2px);
-  }
-  70% {
-    transform: translate(-3px, 2px);
-  }
-  85% {
-    transform: translate(2px, -1px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
-@keyframes screenRumble {
-  20% {
-    transform: translate(-1.5px, 1px);
-  }
-  40% {
-    transform: translate(1.5px, -1px);
-  }
-  60% {
-    transform: translate(-1px, -1.5px);
-  }
-  80% {
-    transform: translate(1px, 1.5px);
-  }
-}
-@keyframes wordleBubbleFade {
-  0%,
-  20% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes wordleBubbleScale {
-  from {
-    transform: scale(0.85);
-  }
-  to {
-    transform: scale(1);
   }
 }
 
@@ -1668,7 +1409,11 @@ canvas {
    -------------------------------------------------------------------------- */
 .wdoc {
   margin-block: 2rem 0;
-  border-block: 2px solid var(--foreground);
+  /* All four sides, so the toolbar and the desk read as one framed
+     application window rather than two bands floating off the edges. The
+     stage sits inside .exhibit's 1.5rem side padding at every width, so the
+     side borders stay on screen without any full-bleed compensation. */
+  border: 2px solid var(--foreground);
   background: var(--primary);
 }
 .wdoc__bars {
@@ -1690,9 +1435,18 @@ canvas {
   align-items: center;
   padding: 6px 8px;
 }
-@media (min-width: 64rem) {
+@media (min-width: 78rem) {
   .wdoc__bar {
-    grid-template-columns: 1fr 1fr 1fr;
+    /* Equal side columns (WordDocumentAppTopBars' lg:grid-cols-[1fr_1fr_1fr]),
+       so the breadcrumb centres on the whole bar rather than on the slack left
+       over by a tool group much wider than the window buttons. The title
+       column is auto, so the two 1fr columns split what remains evenly and the
+       title lands dead centre — which only holds while the tool group fits in
+       one of those halves, hence the tighter toolbar metrics below and the
+       two-row fallback under this breakpoint (there the title spans the full
+       width, so it is centred anyway). */
+    grid-template-columns: 1fr auto 1fr;
+    column-gap: 0.75rem;
   }
 }
 .wdoc__group {
@@ -1701,6 +1455,16 @@ canvas {
   gap: 0.5rem;
   flex-wrap: wrap;
   min-width: 0;
+}
+@media (min-width: 78rem) {
+  .wdoc__group {
+    /* In the one-row bar the group's min-content is the floor for the first
+       column, which keeps the two side columns equal instead of letting the
+       underline button drop onto a second row. The tighter gap buys back some
+       of the width that centring the title needs on either side of it. */
+    flex-wrap: nowrap;
+    gap: 0.375rem;
+  }
 }
 .wdoc__chiclet {
   display: inline-flex;
@@ -1720,6 +1484,13 @@ canvas {
   width: 2px;
   height: 24px;
   background: var(--foreground);
+}
+@media (max-width: 63.99rem) {
+  /* On narrow screens the group wraps and the chiclet already sits on its own
+     line, leaving this rule dangling off the end of it like a stray mark. */
+  .wdoc__divider {
+    display: none;
+  }
 }
 .wdoc__select {
   width: 11.25rem;
@@ -1757,6 +1528,18 @@ canvas {
 .wdoc__tool--u {
   text-decoration: underline;
 }
+@media (min-width: 78rem) {
+  /* One-row bar: trim the font picker to what its label needs and shave the
+     tool buttons, so the group fits in half of the space left beside the
+     centred breadcrumb. (After the base rules above, which they override.) */
+  .wdoc__select {
+    width: 9.5rem;
+  }
+  .wdoc__tool {
+    width: 28px;
+    height: 28px;
+  }
+}
 .wdoc__title {
   text-align: center;
   font-family: var(--font-header);
@@ -1765,10 +1548,18 @@ canvas {
   grid-column: 1 / -1;
   order: 3;
 }
-@media (min-width: 64rem) {
+@media (min-width: 78rem) {
   .wdoc__title {
     grid-column: auto;
     order: 0;
+    /* A touch smaller on the one-row bar, and kept to a single line: if the
+       bar ever runs out of room the breadcrumb ellipsises instead of pushing
+       into the toolbar. */
+    font-size: 0.7875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
 }
 .wdoc__title em {
@@ -1843,22 +1634,14 @@ canvas {
   opacity: 1;
   pointer-events: auto;
 }
-.reveal-border {
-  position: relative;
-}
-.reveal-border::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: round(var(--reveal-height, 0px), 1lh);
-  background: var(--accent);
-}
-.reveal-border.is-complete::before {
-  height: 100%;
-}
+/* The museum's growing left border (.revealBorder) is only ever applied to
+   BlockQuote, never to the page itself, so the document has no bar down its
+   left edge here either. */
 .reveal-cursor {
+  /* Out of flow, at the static position it would have had inline: the cursor
+     can trail the last revealed character without re-wrapping the line or
+     adding a line box to the end of the document. */
+  position: absolute;
   display: inline-block;
   width: 1px;
   height: 1em;
@@ -2031,8 +1814,11 @@ canvas {
    The wrapper is `overflow-x-clip pt-10`; the strip is wider than the
    section, so clip x only and let the tilted corners poke out vertically. */
 .dub-letter-wrap {
-  margin: 0 -1.5rem; /* full bleed past .exhibit's side padding */
-  padding-top: 2.5rem;
+  /* Full bleed past .exhibit's side padding. The shorthand also drops the
+     block margin .stage sets, so the bottom one is restored here: without it
+     the next section crowded the strip's blurred lower edge. */
+  margin: 0 -1.5rem 4rem;
+  padding-top: 4rem;
   overflow: clip visible;
 }
 .dub-letter {
@@ -2082,14 +1868,20 @@ canvas {
    gap-8 md:grid-cols-[auto_1fr] md:gap-10` holding the avatar and letter. */
 .dub-letter__content {
   display: flex;
-  min-height: 120vh;
+  /* The museum gives this `min-h-[120vh]` because its letters run long. Ours
+     are three short paragraphs, so a full 120vh would strand them; but the
+     old 72vh left so little strip above and below the middle frame that the
+     whole thing read as a band rather than a projected scene. */
+  min-height: min(84vh, 700px);
   align-items: center;
   justify-content: center;
 }
 .dub-letter__grid {
   display: grid;
   grid-template-columns: 1fr;
-  padding: 1rem;
+  /* The wrap is full-bleed, so the inline padding is this copy's only
+     gutter; match the page's 1.5rem rather than the museum's 1rem. */
+  padding: 1rem 1.5rem;
 }
 .dub-letter__spacer {
   display: none;
@@ -2101,31 +1893,56 @@ canvas {
   gap: 2rem;
 }
 @media (min-width: 48rem) {
+  .dub-letter__content {
+    /* Enough strip above and below the middle frame for the scene to read as
+       a projection, without the frame growing taller than the window. */
+    min-height: min(94vh, 780px);
+  }
   .dub-letter__grid {
     grid-template-columns: 1fr 80vw 1fr;
     gap: 2.5rem;
-    padding: 5rem 2.5rem;
+    padding: 6rem 2.5rem;
   }
   .dub-letter__spacer {
     display: block;
   }
   .dub-letter__body {
-    grid-template-columns: auto 1fr;
+    /* The middle frame is 80vw, but a line of this letter set that wide runs
+       far past a comfortable measure. Cap the text column instead and centre
+       the avatar-plus-letter pair in the frame, so the two read as one block
+       laid on the film rather than a band stretched across it. */
+    grid-template-columns: auto minmax(0, 36ch);
+    justify-content: center;
     gap: 2.5rem;
   }
 }
 /* Where the museum has the member's avatar (`size-32 md:size-40
-   rounded-full` in a `-rotate-2 blur-[2px]` wrapper): an empty disc that
-   keeps the composition without pretending to be one. */
+   rounded-full` in a `-rotate-2 blur-[2px]` wrapper): the site's own
+   favicon, sepia-toned so it reads as film stock on the cream frame. */
 .dub-letter__avatar {
   width: 8rem;
   height: 8rem;
   border-radius: 50%;
   justify-self: center;
-  background: var(--primary-foreground);
-  opacity: 0.12;
+  overflow: hidden;
+  /* The disc sits on a cream film frame, so the image's 10% transparency
+     should wash toward the frame, not toward the old placeholder's dark. */
+  background: var(--foreground);
   rotate: -2deg;
   filter: blur(2px);
+}
+.dub-letter__avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  /* The source is a silhouette under magenta and green light, so sepia() on
+     its own lands olive: grayscale first, then tone. The brightness lift
+     keeps the dark half off the cream frame's floor, and the slight
+     transparency keeps it inside the projection rather than on top of it. */
+  filter: grayscale(1) sepia(0.92) saturate(1.4) contrast(0.88) brightness(1.2);
+  opacity: 0.88;
 }
 @media (min-width: 48rem) {
   .dub-letter__avatar {
@@ -2138,6 +1955,9 @@ canvas {
 .dub-letter__text {
   display: flex;
   align-items: center;
+  /* Same measure the grid column is capped at above, so the cap holds at
+     every width even where the column itself is wider than the text. */
+  max-width: 36ch;
   rotate: -1.5deg;
   font-style: italic;
 }
@@ -2231,77 +2051,92 @@ canvas {
   }
 }
 
-/* SlideDeck: cardboard wall under a 50% gray overlay blend, curtains hung
-   past the edges, a spotlight gradient on top of everything. */
-.diorama {
-  height: min(85vh, 720px);
-  margin-top: 0;
-  background:
-    linear-gradient(90deg, rgba(128, 128, 128, 0.5) 0%, rgba(128, 128, 128, 0.5) 100%),
-    url("assets/lowlights/cardboard-background-1.webp") center / cover no-repeat;
-  background-blend-mode: overlay;
-  user-select: none;
-  -webkit-user-select: none;
+/* SlideDeck: just the curtains, and hung on the section itself rather than on
+   a stage box of their own. With nothing painted inside it that box was a
+   hollow rectangle of dead space; as section decoration the same assets frame
+   the copy and the recording. No painted backdrop and no spotlight. */
+#lowlights.exhibit {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  /* The valance is 2560x400, so at width: 100% it stands 15.625vw tall and
+     its scallops reach about 72% of that. The first paragraph starts below
+     them rather than under them. */
+  padding-block-start: calc(13.5vw + 2.5rem);
+}
+#lowlights .exhibit__inner {
+  position: relative;
+  z-index: 2;
 }
 .diorama__curtain {
   position: absolute;
-  top: -5rem;
-  z-index: 3;
-  height: 130%;
-  width: auto;
+  top: 0;
+  z-index: 0;
+  /* Never wider than the gutter beside the copy column, so a drape never
+     falls behind the paragraphs or the recording. */
+  width: min(27.5rem, (100% - 45rem) / 2);
+  height: auto;
+  /* How far each drape is pushed past its own edge of the section, as a share
+     of its width. Hung flush the pair took nearly half the screen and left a
+     band of empty cream between each drape and the copy; tucked, only the
+     inner part of each one is on screen, so they read as drapes running off
+     the edges of the stage instead of two panels parked beside the text.
+     The swing keyframes animate `translate`, so the tuck has to ride on
+     `transform` — the two compose rather than overwrite each other. */
+  --curtain-tuck: 30%;
   filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.16)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.4));
+  /* They hang at their natural length: the gold tiebacks stay visible and the
+     hem keeps its own edge and shadow, which reads better than fading it out. */
   pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .diorama__curtain--left {
-  left: -2.5rem;
+  left: 0;
+  transform: translateX(calc(-1 * var(--curtain-tuck)));
   animation: swingXYFrames 10s ease-in-out infinite;
 }
 .diorama__curtain--right {
-  right: -2.5rem;
+  right: 0;
+  transform: translateX(var(--curtain-tuck));
   animation: swingNegativeXYFrames 10s ease-in-out infinite;
 }
 .diorama__valance {
   position: absolute;
-  top: -6.25rem;
-  right: 0;
-  width: max(100%, 2560px);
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
   height: auto;
   filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.16)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.4));
   pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .diorama__valance--front {
-  z-index: 4;
+  z-index: 1;
   animation: swingYFrames 5s ease-in-out infinite;
 }
 .diorama__valance--back {
-  z-index: 3;
   animation: swingYFrames 5s ease-in-out -2.5s infinite;
 }
-.diorama__spotlight {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  background:
-    linear-gradient(120deg, rgba(0, 0, 0, 0.7) 0%, transparent 50%),
-    linear-gradient(60deg, transparent 50%, rgba(0, 0, 0, 0.7) 100%);
-  pointer-events: none;
-}
-@media (max-width: 48rem) {
-  .diorama__curtain,
-  .diorama__valance,
-  .diorama__spotlight {
+@media (max-width: 79.99rem) {
+  /* Below 80rem the gutters beside the copy column are too narrow to hang a
+     drape in. The valance alone still reads as a curtain pulled across the
+     top of the section. */
+  .diorama__curtain {
     display: none;
   }
 }
 
 /* --------------------------------------------------------------------------
-   You: live pixelated vortex sphere (whid10-vortex.js), recording slot,
-   one tilting card
+   You: live pixelated vortex sphere (whid10-vortex.js) with a recording of
+   the exhibit and a panel of copy over it
 
    Scroll-locked camera: .you-scroll is a 350vh track and .you-stage pins
    inside it for the middle 250vh. whid10-vortex.js reads how far the page
    has scrolled through the track and flies the camera from far outside the
-   sphere to the backdrop framing inside it. The card (.you-media) and copy
+   sphere to the backdrop framing inside it. The recording (.you-media) and copy
    (.you-copy) sit on top of the pinned stage and fade in over the last
    stretch via a named view timeline on the track (see @supports below).
    -------------------------------------------------------------------------- */
@@ -2345,18 +2180,46 @@ canvas {
   font-size: 1.5rem;
   margin: 0;
 }
-/* The layer over the pinned stage: card, then copy; side by side from
-   48rem. Scrolls within itself only if a short viewport can't fit both. */
+/* The word over the sphere while the camera is still outside it — the museum
+   hangs ExhibitTitle in front of the ball the same way (IntroTitle.tsx: an
+   <Html transform> at [0, 1.5, 10], i.e. centred and a little high, shown
+   only in the "before" phase). --font-header is the same fayte-pixel-hard
+   face the museum sets the name in, and the glow is
+   SelectedCardOverlay.tsx's card-name textShadow. */
+.you-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-header);
+  font-style: normal;
+  font-size: clamp(3.5rem, 15vw, 9rem);
+  line-height: 1;
+  text-align: center;
+  color: var(--foreground);
+  text-shadow:
+    1px 1px 4px var(--background),
+    0 0 20px rgba(180, 120, 255, 0.6);
+  pointer-events: none;
+}
+
+/* The layer over the pinned stage: recording, then copy; side by side from
+   48rem. No scroll container of its own — an `overflow` here would put a
+   scrollbar inside the pinned stage the moment the entrance keyframes move
+   either child (a transform counts toward scrollable overflow even when the
+   settled layout fits). Instead the copy is sized against the viewport
+   height below so it always fits the pin. */
 .you-reveal {
   position: relative;
   z-index: 1;
   width: min(100%, 64rem);
   max-height: 100%;
-  overflow-y: auto;
   padding: clamp(1rem, 4vh, 3rem) 1.5rem;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem 3rem;
+  gap: clamp(1rem, 2.5vh, 2rem) 3rem;
   align-items: center;
   justify-items: center;
 }
@@ -2365,35 +2228,94 @@ canvas {
   justify-items: center;
   width: 100%;
 }
+/* Known frame size, so the row is the right height before metadata loads.
+   The corner matches .you-copy's so the two panes over the vortex read as a
+   pair, and the edge is lifted from .blog-video's default because what the
+   recording shows is another purple vortex — without it the frame dissolves
+   into the live one behind it. */
+.you-media .blog-video {
+  aspect-ratio: 1280 / 684;
+  /* Inside a 100vh pin a landscape frame that only answers to the column
+     width takes the whole stage on a short window and pushes the copy out of
+     it, so the width carries a viewport-height cap too: 64vh of width is
+     ~34vh of height at this aspect. It has to be expressed as a width —
+     capping the height instead would leave the box its full width and
+     letterbox the video inside it. */
+  width: min(100%, 64vh);
+  border-radius: 10px;
+  border-color: color-mix(in oklab, var(--foreground) 24%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+/* The museum's own panel treatment, ported from
+   app/you/components/SelectedCardOverlay.tsx + SkewedBackdrop.tsx: no border,
+   no blur, no translucent glass — just a flat --secondary rectangle at 60%
+   opacity, skewed a couple of degrees so it reads as a hand-laid card rather
+   than a UI panel, sitting behind centred text in a 35rem (Tailwind w-140)
+   column with 2.5rem (p-10) of padding. The backdrop is a pseudo-element
+   here because the paragraphs inside are authored content; the museum's
+   `isolate` + `-z-1` pairing is kept so it can't escape behind the canvas. */
 .you-copy {
+  position: relative;
+  isolation: isolate;
   width: 100%;
-  max-width: 44ch;
-  padding: 1.25rem 1.5rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: color-mix(in oklab, var(--background) 62%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  max-width: 35rem;
+  /* Both sized against the viewport height, not just the width: the panel is
+     pinned inside a 100vh stage next to a landscape video, so on a short
+     window it has to give ground or it would spill past the pin. The upper
+     bounds are the museum's own p-10 and the page's body size. */
+  padding: clamp(1.25rem, 3vh, 2.5rem);
+  font-size: min(1rem, 1.9vh);
+  border-radius: 10px;
+  text-align: center;
+  color: var(--foreground);
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+.you-copy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--secondary);
+  opacity: 0.6;
+  /* -skew-x-3 -skew-y-2 */
+  transform: skewX(-3deg) skewY(-2deg);
+  pointer-events: none;
 }
 .you-copy p:last-child {
   margin-bottom: 0;
 }
 @media (max-width: 47.99rem) {
+  /* Stacked, so the recording and the panel are sharing one column of
+     height rather than splitting the width. */
+  .you-media .blog-video {
+    width: min(100%, 48vh);
+  }
   .you-copy {
-    font-size: 0.85em;
+    font-size: min(0.85rem, 1.6vh);
+    /* p-10 is too much of a 400px viewport to spend on padding. */
+    padding: clamp(1rem, 2vh, 1.5rem) 1.25rem;
   }
 }
 @media (min-width: 48rem) {
   .you-reveal {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    /* Just past the breakpoint there is barely room for two columns, and the
+       panel is the one that needs it: a narrow column of centred text runs
+       long enough to outgrow the pin. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    column-gap: 2.5rem;
     justify-items: stretch;
-  }
-  .you-media {
-    justify-items: end;
   }
   .you-copy {
     justify-self: start;
+  }
+}
+@media (min-width: 64rem) {
+  .you-reveal {
+    /* With room to spare the recording takes the wider half, since it is
+       landscape where the card it replaced was portrait, and the gap opens
+       up so the two read as separate things over the vortex. */
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    column-gap: 4rem;
   }
 }
 .you-recording {
@@ -2407,42 +2329,18 @@ canvas {
   font-family: var(--font-accent);
   font-style: normal;
 }
-.holo--card {
-  perspective: 800px;
-}
-.holo--card .holo__card {
-  /* Capped by viewport height so card + copy fit the pinned stage:
-     the 2/3.5 aspect makes 34vh wide ≈ 60vh tall. */
-  width: min(220px, 34vh, 100%);
-  aspect-ratio: 2 / 3.5;
-  border-radius: 12px;
-  background: linear-gradient(160deg, #2a1745, #0d0712);
-  border: 1px solid var(--border);
-}
-@media (max-width: 47.99rem) {
-  .holo--card .holo__card {
-    /* Stacked above the copy: ≈ 32vh tall. */
-    width: min(150px, 18vh, 100%);
-  }
-}
-.holo--card .holo__content {
-  height: 100%;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-header);
-  font-style: normal;
-  font-size: 1.5rem;
-  color: var(--primary);
-}
 
-/* Card slides in from the left and copy from the right once the museum's
-   intro fly-in has landed. `contain` on a subject taller than the
+/* Recording and copy rise into place from bottom centre once the museum's intro
+   fly-in has landed — the same direction the museum's tarot cards travel,
+   which bezier up from the sphere's south pole (TarotCard.tsx). Both grow
+   about `transform-origin: bottom center` with no X component, so nothing
+   swings in from a screen edge. `contain` on a subject taller than the
    scrollport is exactly the span during which the subject fully covers it,
    i.e. the pinned phase (0% = track top at viewport top, 100% = track
    bottom at viewport bottom), which whid10-vortex.js maps linearly onto
    the museum timeline: 7000 ms intro, then the tarot cards' entrance
    (config/cardAnimation.ts: 2400 ms each, easeOutCubic, 500 ms stagger),
-   9900 ms in all. The card takes the first card's slot (7000–9400 ms =
+   9900 ms in all. The recording takes the first card's slot (7000–9400 ms =
    70.71%–94.95%) and the copy the second's (7500–9900 ms = 75.76%–100%).
    The 33.33% opacity keyframe is TarotCard.tsx's min(1, eased * 3).
    Without support the two are simply visible. */
@@ -2456,6 +2354,9 @@ canvas {
     animation-fill-mode: both;
     /* easeOutCubic */
     animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+    /* Both the scale and the translate below pivot here, so each element
+       unfolds upward off its own bottom edge instead of the box centre. */
+    transform-origin: bottom center;
   }
   .you-media {
     animation-name: you-card-in;
@@ -2465,11 +2366,18 @@ canvas {
     animation-name: you-copy-in;
     animation-range: contain 75.76% contain 100%;
   }
+  /* Visible while the camera is still outside the sphere, gone by the time
+     the approach hands off to the descent at 2800 ms (28.28%). */
+  .you-title {
+    animation: you-title-out linear both;
+    animation-timeline: --you-track;
+    animation-range: contain 0% contain 18%;
+  }
 }
 @keyframes you-card-in {
   from {
     opacity: 0;
-    translate: -3rem 0;
+    translate: 0 3rem;
     scale: 0;
   }
   33.33% {
@@ -2484,7 +2392,8 @@ canvas {
 @keyframes you-copy-in {
   from {
     opacity: 0;
-    translate: 3rem 0;
+    translate: 0 3rem;
+    scale: 0.92;
   }
   33.33% {
     opacity: 1;
@@ -2492,6 +2401,15 @@ canvas {
   to {
     opacity: 1;
     translate: 0 0;
+    scale: 1;
+  }
+}
+@keyframes you-title-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 
@@ -2511,6 +2429,11 @@ canvas {
     max-height: none;
     overflow: visible;
   }
+  /* Nothing flies in, so there's no "before the approach" moment for the
+     title to own — it would just sit on top of the card and copy. */
+  .you-title {
+    display: none;
+  }
   .you-media,
   .you-copy {
     animation: none;
@@ -2524,20 +2447,17 @@ canvas {
   .whid-logo__conic,
   .gradient-text,
   .conic-button,
-  .bots-stage__beams,
+  .bots-beams,
   .projected,
   .projected__bg,
   .film-grain__noise,
   .film-grain__speckle,
   .diorama__curtain,
   .diorama__valance,
-  .is-glitching .wtile,
   .reveal-cursor {
     animation: none;
   }
-  .shape__inner,
-  .bot-msg,
-  .wtile {
+  .shape__inner {
     transition: none;
   }
   /* The projector blur lives in the flicker keyframes; hold one frame of
@@ -2549,5 +2469,526 @@ canvas {
   .projected--subtle .projected__bg {
     opacity: 0.9;
     filter: blur(8px);
+  }
+}
+
+/* ==========================================================================
+   Screen-recording embeds.
+   Appended block: everything below is self-contained and does not modify any
+   rule above it.
+   ========================================================================== */
+
+/* Recordings from the museum, embedded like the existing .blog-figure images. */
+.blog-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+}
+
+/* ==========================================================================
+   Callouts, the Do Times figure, and the front door's split logo/button.
+   Appended block: everything below is self-contained and does not modify any
+   rule above it.
+   ========================================================================== */
+
+/* The draft's "> ![NOTE]" blockquotes. Rather than a bordered, tinted box,
+   the callout is a pane of semitransparent glass: it takes a little colour
+   from whatever is behind it instead of painting over it, so it works both on
+   the front door's flat #222 and floating on the You exhibit's skewed panel
+   over the vortex. Every colour is a color-mix against `transparent`, so the
+   section's own tokens still set the hue. */
+.callout {
+  --callout-accent: var(--accent, var(--primary));
+  margin: 1.75rem 0;
+  padding: 1.15em 1.35em 1.25em;
+  border: 1px solid color-mix(in oklab, var(--foreground) 16%, transparent);
+  /* A touch rounder than the surrounding UI so it reads as an inset aside. */
+  border-radius: calc(var(--radius) + 0.25rem);
+  /* A whisper of accent in the top corner fading into a neutral wash — the
+     "depth" is this gradient plus the inset highlight below, nothing heavier. */
+  background: linear-gradient(
+    155deg,
+    color-mix(in oklab, var(--callout-accent) 12%, transparent),
+    color-mix(in oklab, var(--foreground) 7%, transparent) 60%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 1px 12px rgba(0, 0, 0, 0.18);
+  color: var(--foreground);
+  font-size: 0.9em;
+}
+.callout::before {
+  content: "Fun fact";
+  display: block;
+  margin-bottom: 0.6em;
+  font-family: var(--font-accent);
+  font-style: normal;
+  /* Small and widely tracked; the two themes whose accent face can't carry
+     that treatment override size/tracking below. */
+  font-size: 0.85em;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--callout-accent) 55%, var(--foreground));
+}
+/* filmotype-yukon is a connected brush script: setting it in caps and prying
+   the letters apart turns "FUN FACT" into something closer to "JUN JACI". The
+   two themes that use it keep the script's natural mixed case instead. */
+[data-theme="login"] .callout::before,
+[data-theme="oc"] .callout::before {
+  font-size: 1.15em;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+/* The magic theme's pixel/blackletter faces are illegible at label size, so
+   the label falls back to the body face there. Its --accent is a deep purple
+   that disappears against the panel, so the label borrows --primary instead. */
+[data-theme="magic"] .callout::before {
+  font-family: var(--font-text);
+  font-size: 0.75em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: color-mix(in oklab, var(--primary) 80%, var(--foreground));
+}
+.callout p {
+  margin: 0 0 0.65em;
+}
+.callout p:last-child {
+  margin-bottom: 0;
+}
+
+/* The Do Times is 293x909 — a newspaper column, and a deliberately low-res
+   one, so it is never drawn wider than its native 293px. It reads as a
+   clipping: centred under the copy at every width, tilted slightly, lifted
+   off the page by a soft shadow. */
+.do-times {
+  width: 100%;
+  max-width: 293px;
+  margin: 2rem auto 2.5rem;
+  rotate: -1.5deg;
+  /* The clipping is 909px tall and the lower half is small print nobody is
+     going to read at this size, so only the masthead and the first stories
+     are shown: the column is cut at about half its height and the ink fades
+     out on the way down, so the cut lands on nothing rather than on a hard
+     edge. The section keeps the height the other half used to take. */
+  max-height: 460px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+}
+.do-times img {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  /* No lift: a shadow under a column that fades out has nothing to sit on,
+     and the clip would cut it off at the fold anyway. */
+}
+
+/* The front door's logo and sign-in button now sit at the two points the
+   draft puts them at, so each .door carries only its own slot. */
+.door--logo {
+  padding-bottom: 1.5rem;
+}
+.door--cta {
+  padding-block: 1rem 2.5rem;
+}
+
+/* ==========================================================================
+   Section transitions ("seams")
+
+   One <div class="seam seam--<from>-<to>" aria-hidden="true"> sits between
+   every pair of exhibits, replacing the hard colour change at the boundary.
+   Each seam is sized in rem and half of it is pulled up into the exhibit
+   above (whose bottom padding is never less than 4rem), so the seam straddles
+   the old edge, its bottom edge *is* the next exhibit's top edge, and the page
+   only grows by half a seam. Technique varies per boundary so the page reads
+   as one journey rather than twelve identical dividers. No seam contains text.
+   ========================================================================== */
+.seam {
+  --seam-h: 6rem;
+  position: relative;
+  /* Above the exhibit it overlaps (sections are z-index:auto at most). */
+  z-index: 2;
+  height: var(--seam-h);
+  margin-block-start: calc(var(--seam-h) * -0.5);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.seam::before,
+.seam::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* The 4px --muted rails pinned to the top and bottom edges of the gamers
+   exhibit were the page's only literal full-width rules at a section edge.
+   The seams frame those edges now; delete this rule to bring them back. */
+.gamers-bar {
+  display: none;
+}
+
+/* 0. front door -> messages: the door's own brand gradient glowing where the
+   dark entrance opens into the white lobby.
+
+   Three flat layers, never a dark band between them: the door's dark, then the
+   brand gradient fading up out of it and held solid through the middle of the
+   seam, then white fading in on top of that and landing on the lobby's #fff
+   exactly at the bottom edge. Every step only ever gets lighter. */
+.seam--front-door-messages {
+  --seam-h: 7rem;
+  background: #222;
+}
+.seam--front-door-messages::before {
+  background: linear-gradient(99deg, #a3eff7, #ffd294, #fcaecf, #bda6ff);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 44%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 44%, #000 100%);
+}
+.seam--front-door-messages::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 58%,
+    rgba(255, 255, 255, 0.55) 80%,
+    #fff 100%
+  );
+}
+
+/* 1. messages -> ticket: a stub perforation. Holes punched along the tear show
+   the ticket exhibit through the paper, with a faint dashed guide above. */
+.seam--messages-ticket {
+  --seam-h: 5rem;
+  background: linear-gradient(to bottom, #fff 0 50%, oklch(0.145 0 0) 50% 100%);
+}
+.seam--messages-ticket::before {
+  background-image: radial-gradient(
+    circle 9px at 16px 50%,
+    oklch(0.145 0 0) 97%,
+    transparent 100%
+  );
+  background-size: 32px 100%;
+  background-repeat: repeat-x;
+}
+
+/* 2. ticket -> bots: an ordered dither. Square pixels of the bots surface grow
+   row by row out of the dark, with a breath of the bots cyan behind them. */
+.seam--ticket-bots {
+  /* 8.5rem = 8px of hallway dark + a 16x128 tile: eight 4x4 Bayer threshold
+     steps at 4px a pixel, the last of them solid, so the seam's bottom edge
+     is exactly the bots surface. */
+  --seam-h: 8.5rem;
+  background: oklch(0.145 0 0);
+}
+.seam--ticket-bots::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='128' shape-rendering='crispEdges'><path d='M0 0h4v4h-4zM8 8h4v4h-4zM0 16h4v4h-4zM8 16h4v4h-4zM0 24h4v4h-4zM8 24h4v4h-4zM0 32h4v4h-4zM8 32h4v4h-4zM4 36h4v4h-4zM0 40h4v4h-4zM8 40h4v4h-4zM12 44h4v4h-4zM0 48h4v4h-4zM8 48h4v4h-4zM4 52h4v4h-4zM12 52h4v4h-4zM0 56h4v4h-4zM8 56h4v4h-4zM4 60h4v4h-4zM12 60h4v4h-4zM0 64h4v4h-4zM4 64h4v4h-4zM8 64h4v4h-4zM4 68h4v4h-4zM12 68h4v4h-4zM0 72h4v4h-4zM8 72h4v4h-4zM12 72h4v4h-4zM4 76h4v4h-4zM12 76h4v4h-4zM0 80h4v4h-4zM4 80h4v4h-4zM8 80h4v4h-4zM12 80h4v4h-4zM4 84h4v4h-4zM12 84h4v4h-4zM0 88h4v4h-4zM4 88h4v4h-4zM8 88h4v4h-4zM12 88h4v4h-4zM4 92h4v4h-4zM12 92h4v4h-4zM0 96h4v4h-4zM4 96h4v4h-4zM8 96h4v4h-4zM12 96h4v4h-4zM0 100h4v4h-4zM4 100h4v4h-4zM12 100h4v4h-4zM0 104h4v4h-4zM4 104h4v4h-4zM8 104h4v4h-4zM12 104h4v4h-4zM4 108h4v4h-4zM8 108h4v4h-4zM12 108h4v4h-4zM0 112h4v4h-4zM4 112h4v4h-4zM8 112h4v4h-4zM12 112h4v4h-4zM0 116h4v4h-4zM4 116h4v4h-4zM8 116h4v4h-4zM12 116h4v4h-4zM0 120h4v4h-4zM4 120h4v4h-4zM8 120h4v4h-4zM12 120h4v4h-4zM0 124h4v4h-4zM4 124h4v4h-4zM8 124h4v4h-4zM12 124h4v4h-4z' fill='%23eeeeee'/></svg>");
+  background-size: 16px 128px;
+  background-position: 0 8px;
+  background-repeat: repeat-x;
+}
+.seam--ticket-bots::after {
+  background: radial-gradient(
+    62% 90% at 50% 86%,
+    hsl(189 100% 73% / 0.22),
+    transparent 68%
+  );
+  mix-blend-mode: screen;
+}
+
+/* 3. bots -> gamers: a plain fade from the bots surface down into the dark of
+   the gallery hallway. */
+.seam--bots-gamers {
+  --seam-h: 8rem;
+  background: linear-gradient(to bottom, oklch(0.95 0.00011 271.152) 0%, #1c1917 100%);
+}
+
+/* 4. gamers -> oc: no transition to speak of. The OC exhibit is painted in the
+   gallery's own dark (below), so the word processor simply sits on the same
+   floor the framed photos hang on.
+
+   The one thing that would still show a line is .spotlight, which shades the
+   gamers corners a shade or two darker than the flat floor. So this seam adds
+   no height at all: it lies inside the gamers bottom padding and cross-fades
+   whatever is behind it into flat #1c1917, which is exactly what the OC
+   section starts with. Being a mask rather than a colour ramp, it lands
+   correctly at every viewport width. */
+.seam--gamers-oc {
+  --seam-h: 3.5rem;
+  margin-block-start: calc(var(--seam-h) * -1);
+  background: #1c1917;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000);
+  mask-image: linear-gradient(to bottom, transparent, #000);
+}
+
+/* The OC exhibit carries on the gamers hallway instead of switching to paper:
+   only the section's own surface changes, never --background, because
+   .wdoc__page paints itself with var(--background) and the window has to keep
+   its light chrome. Nothing but the .wdoc stage lives in this section, but if
+   prose is ever added beside it, it gets the hallway's light type. */
+#oc.exhibit {
+  background-color: #1c1917;
+}
+#oc.exhibit > :not(.stage) {
+  color: #e7e5e4;
+}
+
+/* 5. oc -> dub: a plain fade from the hallway dark the OC exhibit now sits on
+   into the deeper dark of the projection room. */
+.seam--oc-dub {
+  --seam-h: 7rem;
+  background: linear-gradient(to bottom, #1c1917 0%, oklch(0.22 0.006 50) 100%);
+}
+/* The dub grain layers (.film-grain) are absolute over the whole section, so
+   without this they switch on at the section's top edge and off at its bottom
+   edge as a hard line, right where the seams above and below are trying to be
+   soft. Fade the grain in over the oc->dub seam and out under the rod. */
+.film-grain {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 7rem, #000 calc(100% - 6.5rem), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 7rem, #000 calc(100% - 6.5rem), transparent);
+}
+
+/* 6. dub -> lowlights: the rod the curtain hangs from. .diorama__valance is
+   pinned to top: 0 of the lowlights section, i.e. to this seam's bottom edge,
+   so a bar drawn along that edge reads as the hardware the whole valance is
+   suspended from. Its top rows are a flat #481114, which is why the seam ends
+   in that colour and why the rod's solid drop is the same: the valance swings
+   down 5px (swingYFrames) and the drop keeps that gap filled. */
+.seam--dub-lowlights {
+  --seam-h: 6.5rem;
+  --rod-h: 1.5rem;
+  /* Only the rod's shadow leaves the box, and nothing here is wider than the
+     seam, so this one may hang over the curtain below it. */
+  overflow: visible;
+  background:
+    radial-gradient(120% 130% at 50% 116%, rgba(214, 150, 80, 0.2), transparent 64%),
+    linear-gradient(
+      to bottom,
+      oklch(0.22 0.006 50) 0%,
+      oklch(0.21 0.008 42) 58%,
+      #2a0d10 86%,
+      #481114 100%
+    );
+}
+.seam--dub-lowlights::before {
+  top: auto;
+  bottom: 0;
+  height: var(--rod-h);
+  background: linear-gradient(
+    to bottom,
+    #6b4f2a 0%,
+    #c9a15c 16%,
+    #f0d59b 32%,
+    #b8873f 56%,
+    #6f4d22 80%,
+    #34210c 100%
+  );
+  box-shadow:
+    0 0.5rem 0 0 #481114,
+    0 0.75rem 0.85rem rgba(0, 0, 0, 0.5);
+}
+/* A turned ball capping each end of the rod, centred on its axis. */
+.seam--dub-lowlights::after {
+  top: auto;
+  bottom: calc((var(--rod-h) - 2.3rem) / 2);
+  height: 2.3rem;
+  background-image:
+    radial-gradient(circle closest-side at 38% 32%, #f6e0ae 6%, #c9a15c 36%, #7a5526 72%, #2e1c09 99%, transparent 100%),
+    radial-gradient(circle closest-side at 38% 32%, #f6e0ae 6%, #c9a15c 36%, #7a5526 72%, #2e1c09 99%, transparent 100%);
+  background-size: 2.3rem 2.3rem;
+  background-position: left center, right center;
+  background-repeat: no-repeat;
+}
+
+/* 7. lowlights -> you: the vortex's mist creeping up the cream. This one sits
+   entirely inside the lowlights padding (--seam-h never exceeds .exhibit's
+   own clamp(4rem, 10vh, 8rem)) so nothing is added above the sticky track. */
+.seam--lowlights-you {
+  /* Tall, but the top half is transparent: it lies over the lowlights copy
+     without touching it, and only the bottom half - which fits inside the
+     exhibit's own bottom padding - actually paints. The dark does not arrive
+     as a straight edge; it rises in soft lobes so the boundary reads as mist
+     rather than a band, and the floor layer guarantees the seam's bottom edge
+     is exactly the magic theme's background. */
+  --seam-h: 10rem;
+  --mist-dark: #0d0712;
+  margin-block-start: calc(var(--seam-h) * -1);
+  background:
+    linear-gradient(to bottom, rgba(13, 7, 18, 0) 76%, var(--mist-dark) 96%),
+    radial-gradient(30% 50% at 9% 100%, var(--mist-dark) 30%, rgba(13, 7, 18, 0) 76%),
+    radial-gradient(26% 42% at 32% 106%, var(--mist-dark) 30%, rgba(13, 7, 18, 0) 76%),
+    radial-gradient(34% 54% at 57% 100%, var(--mist-dark) 30%, rgba(13, 7, 18, 0) 76%),
+    radial-gradient(28% 46% at 83% 104%, var(--mist-dark) 30%, rgba(13, 7, 18, 0) 76%),
+    radial-gradient(70% 46% at 28% 72%, rgba(139, 63, 217, 0.36), transparent 74%),
+    radial-gradient(60% 40% at 80% 80%, rgba(178, 128, 240, 0.3), transparent 74%),
+    linear-gradient(
+      to bottom,
+      rgba(245, 245, 245, 0) 0%,
+      rgba(239, 236, 243, 0.4) 44%,
+      rgba(210, 202, 222, 0.88) 62%,
+      #a99dc0 76%,
+      #6d5d8a 90%,
+      #3d2d56 100%
+    );
+}
+/* The drifting haze. Every blob is kept clear of the tile's own left and right
+   edges, because background-repeat would otherwise cut one in half and the
+   repeat would travel across the seam as a visible vertical edge. */
+.seam--lowlights-you::before {
+  right: auto;
+  width: 200%;
+  background-image:
+    radial-gradient(20% 34% at 24% 80%, rgba(201, 164, 255, 0.26), transparent 70%),
+    radial-gradient(18% 30% at 54% 86%, rgba(139, 63, 217, 0.3), transparent 70%),
+    radial-gradient(20% 36% at 80% 76%, rgba(201, 164, 255, 0.2), transparent 70%);
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  animation: seam-drift-half 44s linear infinite;
+}
+
+/* 8. you -> gift shop: the same mist as the way in, turned upside down. The
+   vortex's dark hangs down in lobes and the daylight of the shop comes up to
+   meet it, so the exhibit is left the way it was entered.
+
+   #you's bottom padding is dropped below and this seam only overlaps a quarter
+   of itself, so the purple of the sphere runs almost straight into the mist
+   instead of sitting on a slab of black first. */
+.seam--you-gift-shop {
+  --seam-h: 8rem;
+  --mist-violet: #3a2258;
+  margin-block-start: calc(var(--seam-h) * -0.25);
+  background:
+    /* the haze that announced the vortex, dispersing */
+    radial-gradient(70% 46% at 28% 26%, rgba(139, 63, 217, 0.4), transparent 74%),
+    radial-gradient(60% 40% at 80% 18%, rgba(178, 128, 240, 0.34), transparent 74%),
+    /* lobes of the vortex's own violet hanging down into the daylight, the
+       same shapes as the way in, turned over. Violet rather than the magic
+       theme's near-black, so the sphere runs straight into the mist without a
+       slab of dark in between. */
+    radial-gradient(30% 50% at 9% 0%, var(--mist-violet) 34%, rgba(58, 34, 88, 0) 78%),
+    radial-gradient(26% 42% at 32% -6%, var(--mist-violet) 34%, rgba(58, 34, 88, 0) 78%),
+    radial-gradient(34% 54% at 57% 0%, var(--mist-violet) 34%, rgba(58, 34, 88, 0) 78%),
+    radial-gradient(28% 46% at 83% -4%, var(--mist-violet) 34%, rgba(58, 34, 88, 0) 78%),
+    /* and the shop's daylight underneath it all. Transparent only across the
+       quarter of the seam that lies over the canvas. */
+    linear-gradient(
+      to bottom,
+      rgba(58, 34, 88, 0) 0%,
+      rgba(58, 34, 88, 0) 9%,
+      #4a3470 24%,
+      #7d6ba3 38%,
+      #aea3c6 52%,
+      #d6d1e0 68%,
+      #efeef2 85%,
+      oklch(0.97 0.00011 271.152) 100%
+    );
+  /* The lobes are cut off by the top of the box, and the sphere behind it is
+     mottled, so without this the cut reads as a ruled line across the canvas.
+     Fading the whole seam in over its first sliver hands the mist over to the
+     vortex instead. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 25%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 25%);
+}
+.seam--you-gift-shop::before {
+  right: auto;
+  width: 200%;
+  background-image:
+    radial-gradient(20% 34% at 24% 20%, rgba(201, 164, 255, 0.26), transparent 70%),
+    radial-gradient(18% 30% at 54% 14%, rgba(139, 63, 217, 0.3), transparent 70%),
+    radial-gradient(20% 36% at 80% 24%, rgba(201, 164, 255, 0.2), transparent 70%);
+  background-size: 50% 100%;
+  background-repeat: repeat-x;
+  animation: seam-drift-half 44s linear infinite;
+}
+/* The sphere is the last thing in the exhibit, so the section's own bottom
+   padding was pure black between it and the mist. */
+#you.exhibit {
+  padding-block-end: 0;
+}
+
+/* 9. gift shop -> epilogue: the lights going out, dissolved through film
+   grain rather than faded. */
+.seam--gift-shop-epilogue {
+  --seam-h: 7rem;
+  background: linear-gradient(
+    to bottom,
+    oklch(0.97 0.00011 271.152) 0%,
+    oklch(0.97 0.00011 271.152) 26%,
+    #8d8d8d 62%,
+    #2a2a2a 88%,
+    oklch(0.145 0 0) 96%,
+    oklch(0.145 0 0) 100%
+  );
+}
+.seam--gift-shop-epilogue::before {
+  background: oklch(0.145 0 0);
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 0 0 0 -0.55'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>"),
+    linear-gradient(to bottom, transparent 4%, #000 34%, #000 70%, transparent 96%);
+  mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 0 0 0 -0.55'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>"),
+    linear-gradient(to bottom, transparent 4%, #000 34%, #000 70%, transparent 96%);
+  -webkit-mask-size: 220px 220px, 100% 100%;
+  mask-size: 220px 220px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  mask-repeat: repeat, no-repeat;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+.seam--gift-shop-epilogue::after {
+  background: oklch(0.97 0.00011 271.152);
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='h'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 0 0 0 -0.85'/></filter><rect width='100%25' height='100%25' filter='url(%23h)'/></svg>"),
+    linear-gradient(to bottom, transparent 46%, #000 72%, transparent 97%);
+  mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='h'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 0 0 0 -0.85'/></filter><rect width='100%25' height='100%25' filter='url(%23h)'/></svg>"),
+    linear-gradient(to bottom, transparent 46%, #000 72%, transparent 97%);
+  -webkit-mask-size: 150px 150px, 100% 100%;
+  mask-size: 150px 150px, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  mask-repeat: repeat, no-repeat;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* 10. epilogue -> thank you: both sides share the hallway theme, so this is a
+   breath rather than a colour change: a hairline that fades out at both ends. */
+.seam--epilogue-thank-you {
+  --seam-h: 6rem;
+  background: oklch(0.145 0 0);
+}
+.seam--epilogue-thank-you::before {
+  display: none;
+}
+.seam--epilogue-thank-you::after {
+  top: 50%;
+  bottom: auto;
+  height: 1px;
+  left: 50%;
+  right: auto;
+  width: min(34rem, 62%);
+  transform: translateX(-50%);
+  background: linear-gradient(to right, transparent, oklch(0.87 0 0 / 0.32) 50%, transparent);
+}
+
+@keyframes seam-drift-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-400px); }
+}
+@keyframes seam-drift-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(400px); }
+}
+@keyframes seam-drift-half {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seam::before,
+  .seam::after {
+    animation: none !important;
   }
 }

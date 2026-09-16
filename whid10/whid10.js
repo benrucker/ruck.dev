@@ -593,242 +593,15 @@
   });
 
   /* ---------------------------------------------------------------------
-     Bots: message fade-up, Wordle tile reveal (WordleLetterReveal +
-     getWordTileKinds), screen glitch with per-tile jitter, glass crack and
-     explosion sprites at the red tile, crescendo overlay with a stepped
-     shake, and the pop outline. Runs on first view; a click replays it.
-     Petal swarm (CherryBlossomPetals constants) on a 2D canvas after.
+     Bots: petal swarm (CherryBlossomPetals constants) on a 2D canvas over
+     the whole exhibit. The museum's canvas was the viewport, so world units
+     are sized from the viewport height here too; petals keep their size and
+     speed on the tall section and the count grows with the extra area.
      --------------------------------------------------------------------- */
   (() => {
-    const stage = document.querySelector(".bots-stage");
-    if (!stage) return;
-    const chat = stage.querySelector(".bot-chat");
-    const overlay = stage.querySelector(".crescendo");
-    const msgs = [...stage.querySelectorAll(".bot-msg")];
-
-    const FIRST_MS = 450; // first message
-    const GAP_MS = 751; // between messages
-    const FADE_UP_MS = 400; // FadeUpReveal; tiles start after it
-    const STAGGER_MS = 200; // per tile
-    const FLIP_MS = 300; // tile flip
-    const BEAT_MS = 600; // pause before the continuation message
-    const GLITCH_TAIL_MS = 1500; // glitch lingers this long after the pop
-    const ANSWER = "ALBUM";
-    const FORBIDDEN = "WORDLE";
-
-    // getWordTileKinds: score each word against ALBUM like a Wordle guess.
-    // The forbidden word gets a red tile on its last letter.
-    const kindsFor = (word) => {
-      const kinds = [];
-      const claimed = new Set();
-      const leading = (/^[A-Za-z]+/.exec(word)?.[0] ?? "").toUpperCase();
-      const forbidden = leading === FORBIDDEN;
-      [...word].forEach((ch, i) => {
-        if (forbidden && i === FORBIDDEN.length - 1) return kinds.push("red");
-        if (!/^[A-Za-z]$/.test(ch)) return kinds.push("punct");
-        const upper = ch.toUpperCase();
-        let kind = "gray";
-        if (i < ANSWER.length) {
-          if (ANSWER[i] === upper) kind = "green";
-          else if (ANSWER.includes(upper)) kind = "yellow";
-        }
-        if (kind === "green") claimed.add(upper);
-        else if (kind === "yellow") {
-          if (claimed.has(upper)) kind = "gray";
-          else claimed.add(upper);
-        }
-        kinds.push(kind);
-      });
-      return kinds;
-    };
-
-    // Build the tiles once from the message text.
-    const wordles = [...stage.querySelectorAll(".wordle-text")].map((el) => {
-      const text = el.textContent.trim();
-      el.textContent = "";
-      const tiles = [];
-      text.split(/\s+/).forEach((word) => {
-        const group = document.createElement("span");
-        group.className = "wordle-word";
-        const kinds = kindsFor(word);
-        [...word].forEach((ch, i) => {
-          const index = tiles.length;
-          const t = document.createElement("span");
-          t.className = `wtile wtile--${kinds[i]}`;
-          t.textContent = ch;
-          t.style.setProperty("--tile-delay", `${FADE_UP_MS + index * STAGGER_MS}ms`);
-          t.style.setProperty("--jitter-ms", `${130 + ((index * 23) % 90)}ms`);
-          t.style.setProperty("--jitter-delay", `-${index * 37}ms`);
-          group.append(t);
-          tiles.push(t);
-        });
-        el.append(group);
-      });
-      const redIndex = tiles.findIndex((t) => t.classList.contains("wtile--red"));
-      return {
-        el,
-        tiles,
-        msg: el.closest(".bot-msg"),
-        pop: el.hasAttribute("data-pop"),
-        redIndex: redIndex < 0 ? null : redIndex,
-        totalMs: FADE_UP_MS + (tiles.length - 1) * STAGGER_MS + FLIP_MS,
-      };
-    });
-    const wordleFor = (msg) => wordles.find((w) => w.msg === msg);
-
-    let timers = [];
-    let crescendoRaf = 0;
-    let sprites = [];
-    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
-
-    const centerIn = (el, container) => {
-      const a = el.getBoundingClientRect();
-      const b = container.getBoundingClientRect();
-      return { x: a.left + a.width / 2 - b.left, y: a.top + a.height / 2 - b.top };
-    };
-
-    // Screen glitch: shake then rumble the chat, jitter every tile, crack the
-    // glass behind the red tile and blow it up once.
-    const startGlitch = (w) => {
-      chat?.classList.add("screen-glitch");
-      wordles.forEach((x) => x.el.classList.add("is-glitching"));
-      const red = w.tiles[w.redIndex];
-      const c = centerIn(red, w.el);
-      ["glass-crack", "explosion"].forEach((cls) => {
-        const d = document.createElement("div");
-        d.className = cls;
-        d.setAttribute("aria-hidden", "true");
-        d.style.setProperty("--cx", `${c.x.toFixed(1)}px`);
-        d.style.setProperty("--cy", `${c.y.toFixed(1)}px`);
-        w.el.append(d);
-        sprites.push(d);
-      });
-    };
-    const endGlitch = () => {
-      chat?.classList.remove("screen-glitch");
-      wordles.forEach((x) => x.el.classList.remove("is-glitching"));
-      sprites.forEach((d) => d.remove());
-      sprites = [];
-    };
-
-    // Crescendo: progress^3 drives the overlay; a 30 Hz random translate of
-    // growing amplitude shakes the chat on top of the rumble.
-    const startCrescendo = (durationMs) => {
-      const startedAt = performance.now();
-      let lastStep = -Infinity;
-      overlay?.classList.add("is-active");
-      const tick = () => {
-        const now = performance.now();
-        const progress = Math.min(1, (now - startedAt) / durationMs);
-        const eased = progress ** 3;
-        overlay?.style.setProperty("--crescendo-progress", eased.toFixed(4));
-        if (now - lastStep >= 1000 / 30) {
-          lastStep = now;
-          const angle = Math.random() * Math.PI * 2;
-          const radius = Math.random() * eased * 10;
-          if (chat) chat.style.translate = `${(Math.cos(angle) * radius).toFixed(2)}px ${(Math.sin(angle) * radius).toFixed(2)}px`;
-        }
-        if (progress < 1) crescendoRaf = requestAnimationFrame(tick);
-      };
-      crescendoRaf = requestAnimationFrame(tick);
-    };
-    const endCrescendo = () => {
-      cancelAnimationFrame(crescendoRaf);
-      crescendoRaf = 0;
-      overlay?.classList.remove("is-active");
-      overlay?.style.setProperty("--crescendo-progress", "0");
-      chat?.style.removeProperty("translate");
-    };
-
-    // Pop: a sparse dashed outline around the message that scales in and fades.
-    const pop = (w) => {
-      endCrescendo();
-      const body = w.msg.querySelector(".bot-msg__body");
-      const b = body.getBoundingClientRect();
-      const st = stage.getBoundingClientRect();
-      const pad = 8;
-      const x = b.left - st.left - pad;
-      const y = b.top - st.top - pad;
-      const wd = b.width + pad * 2;
-      const ht = b.height + pad * 2;
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute("class", "pop-outline");
-      svg.setAttribute("aria-hidden", "true");
-      svg.setAttribute("width", wd);
-      svg.setAttribute("height", ht);
-      svg.setAttribute("viewBox", `0 0 ${wd} ${ht}`);
-      svg.style.left = `${x}px`;
-      svg.style.top = `${y}px`;
-      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      const r = 12;
-      path.setAttribute(
-        "d",
-        `M${r},0H${wd - r}A${r},${r} 0 0 1 ${wd},${r}V${ht - r}A${r},${r} 0 0 1 ${wd - r},${ht}H${r}A${r},${r} 0 0 1 0,${ht - r}V${r}A${r},${r} 0 0 1 ${r},0Z`,
-      );
-      path.setAttribute("fill", "none");
-      path.setAttribute("stroke", "#888");
-      path.setAttribute("stroke-width", "30");
-      path.setAttribute("stroke-dasharray", "3 100");
-      svg.append(path);
-      stage.append(svg);
-      sprites.push(svg);
-      at(500, () => svg.remove());
-    };
-
-    const reset = () => {
-      timers.forEach(clearTimeout);
-      timers = [];
-      endCrescendo();
-      endGlitch();
-      msgs.forEach((m) => {
-        m.style.setProperty("--delay", "0ms");
-        m.classList.remove("is-in");
-      });
-      wordles.forEach((w) => w.el.classList.remove("is-revealed"));
-    };
-
-    const run = () => {
-      reset();
-      if (reduceMotion) {
-        msgs.forEach((m) => m.classList.add("is-in"));
-        wordles.forEach((w) => w.el.classList.add("is-revealed"));
-        return;
-      }
-      let t = FIRST_MS;
-      msgs.forEach((m, i) => {
-        const w = wordleFor(m);
-        const startAt = t;
-        at(startAt, () => {
-          m.classList.add("is-in");
-          if (!w) return;
-          w.el.classList.add("is-revealed");
-          if (w.redIndex != null) {
-            const flipEnd = FADE_UP_MS + w.redIndex * STAGGER_MS + FLIP_MS;
-            at(flipEnd, () => startGlitch(w));
-          }
-          if (w.pop) {
-            startCrescendo(w.totalMs);
-            at(w.totalMs, () => pop(w));
-            at(w.totalMs + GLITCH_TAIL_MS, endGlitch);
-          }
-        });
-        // The next message follows the museum's 751 ms cadence, or waits
-        // for a tile reveal to finish plus a beat.
-        t = w ? startAt + w.totalMs + BEAT_MS : startAt + GAP_MS;
-      });
-    };
-
-    onVisibility(stage, (visible) => {
-      if (visible) run();
-      else reset();
-    }, { threshold: 0.3 });
-
-    // Click to continue: the museum advances a step; here it replays the run.
-    stage.addEventListener("click", () => run());
-
-    // Petals.
-    const canvas = stage.querySelector(".bots-stage__petals");
-    if (!canvas || reduceMotion) return;
+    const section = document.querySelector('[data-theme="bots"].exhibit');
+    const canvas = section?.querySelector(".bots-petals");
+    if (!section || !canvas || reduceMotion) return;
     const ctx = canvas.getContext("2d");
     const SPRITES = ["broad", "curled", "narrow"].map((k) => {
       const img = new Image();
@@ -851,11 +624,13 @@
       margin: 1.2,
       topSpawn: 0.3,
       maxDt: 0.05,
-      worldH: 9.3, // visible height at fov 50, camera z 10
+      worldH: 9.3, // visible height at fov 50, camera z 10 (one viewport)
     };
     let W = 1;
     let H = 1;
     let worldW = 1;
+    let worldH = C.worldH;
+    let pxPerUnit = 1;
     let petals = [];
     let running = false;
     let last = 0;
@@ -881,26 +656,31 @@
       p.phase = rand(0, Math.PI * 2);
       if (initial) {
         p.x = rand(-worldW / 2, worldW / 2);
-        p.y = rand(-C.worldH / 2, C.worldH / 2);
+        p.y = rand(-worldH / 2, worldH / 2);
       } else if (Math.random() < C.topSpawn) {
         p.x = rand(-worldW / 2, worldW / 2 + C.margin);
-        p.y = C.worldH / 2 + C.margin;
+        p.y = worldH / 2 + C.margin;
       } else {
         p.x = worldW / 2 + C.margin;
-        p.y = rand(-C.worldH / 2, C.worldH / 2 + C.margin);
+        p.y = rand(-worldH / 2, worldH / 2 + C.margin);
       }
       return p;
     };
     const resize = () => {
-      const r = stage.getBoundingClientRect();
+      const r = section.getBoundingClientRect();
       const dpr = Math.min(devicePixelRatio || 1, 2);
       W = Math.max(1, Math.floor(r.width));
       H = Math.max(1, Math.floor(r.height));
       canvas.width = W * dpr;
       canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      worldW = C.worldH * (W / H);
-      if (!petals.length) petals = Array.from({ length: C.count }, () => spawn({}, true));
+      const viewH = Math.max(1, innerHeight);
+      pxPerUnit = viewH / C.worldH;
+      worldH = H / pxPerUnit;
+      worldW = W / pxPerUnit;
+      const count = Math.round(C.count * Math.max(1, H / viewH));
+      if (petals.length > count) petals.length = count;
+      while (petals.length < count) petals.push(spawn({}, true));
     };
     const step = (now) => {
       if (!running) return;
@@ -908,7 +688,6 @@
       const dt = Math.min(C.maxDt, last ? t - last : 0.016);
       last = t;
       ctx.clearRect(0, 0, W, H);
-      const pxPerUnit = H / C.worldH;
       for (const p of petals) {
         const wx = Math.sin(t * p.wf + p.phase) * p.wax + Math.sin(t * p.ff + p.phase) * p.fax;
         const wy = Math.cos(t * p.wf + p.phase) * p.way + Math.cos(t * p.ff + p.phase) * p.fay;
@@ -917,11 +696,11 @@
         const speed = Math.hypot(wx, wy) * C.tumble + C.minTumble;
         p.rotY += p.rotYRate * speed * dt;
         p.rotZ += p.rotZRate * speed * dt + Math.sin(t * p.wobf + p.phase) * C.wobble.amp * dt;
-        if (p.x < -worldW / 2 - C.margin || p.y < -C.worldH / 2 - C.margin) spawn(p, false);
+        if (p.x < -worldW / 2 - C.margin || p.y < -worldH / 2 - C.margin) spawn(p, false);
 
         const persp = 10 / (10 - p.z);
         const sx = (p.x * persp + worldW / 2) * pxPerUnit;
-        const sy = (C.worldH / 2 - p.y * persp) * pxPerUnit;
+        const sy = (worldH / 2 - p.y * persp) * pxPerUnit;
         const img = p.sprite;
         if (!img.complete || !img.naturalWidth) continue;
         const h = p.scale * persp * 0.9 * pxPerUnit;
@@ -936,9 +715,10 @@
       }
       raf = requestAnimationFrame(step);
     };
-    new ResizeObserver(resize).observe(stage);
+    new ResizeObserver(resize).observe(section);
+    addEventListener("resize", resize);
     resize();
-    onVisibility(stage, (visible) => {
+    onVisibility(section, (visible) => {
       running = visible;
       cancelAnimationFrame(raf);
       last = 0;
@@ -1022,13 +802,16 @@
   /* ---------------------------------------------------------------------
      OC: character reveal (RevealContent + useRevealStepper). Text nodes
      inside .reveal-content are split into per-character spans and revealed
-     on a time budget; a blinking cursor trails the last character and the
-     left border grows in whole line-heights. Clicking the page finishes it.
+     on a time budget; a blinking cursor trails the last character without
+     disturbing the layout. Clicking the page finishes it.
      --------------------------------------------------------------------- */
   (() => {
     const page = document.querySelector(".reveal-content");
     if (!page) return;
-    const OPT = { speed: 3, lineEndPause: 300, blockRevealPause: 1200, blockPreRevealPause: 800, headingEndPause: 1500 };
+    // The museum rests at the end of each line (lineEndPause/headingEndPause);
+    // here a line break costs no more than an ordinary keystroke, so the text
+    // keeps a steady typing rhythm across paragraphs.
+    const OPT = { speed: 3, lineEndPause: 0, blockRevealPause: 1200, blockPreRevealPause: 800, headingEndPause: 0 };
     const BLOCK_TAGS = new Set(["P", "H1", "H2", "H3", "H4", "LI", "BLOCKQUOTE", "FIGURE", "PRE"]);
     const entries = [];
 
@@ -1062,7 +845,6 @@
 
     const cursor = document.createElement("span");
     cursor.className = "reveal-cursor";
-    const border = page.closest(".reveal-border") || page;
     let i = 0;
     let prev = null;
     let timer = 0;
@@ -1093,11 +875,12 @@
       }
       return 0;
     };
+    // Every character is in the DOM from the start (unrevealed ones are just
+    // transparent), and the cursor is taken out of flow by .reveal-cursor, so
+    // tracking the last revealed character never re-wraps a line or changes
+    // the page's height: nothing below the document moves while it types.
     const placeCursor = (el) => {
       if (el) el.after(cursor);
-      const r = cursor.getBoundingClientRect();
-      const b = border.getBoundingClientRect();
-      border.style.setProperty("--reveal-height", `${r.bottom - b.top}px`);
     };
     const reveal = (e) => {
       e.el.classList.add("is-revealed");
@@ -1113,7 +896,6 @@
       clearTimeout(timer);
       entries.forEach((e) => e.el.classList.add("is-revealed"));
       cursor.remove();
-      border.classList.add("is-complete");
     };
     const tick = () => {
       if (done) return;
@@ -1127,7 +909,11 @@
       if (started) return;
       started = true;
       if (reduceMotion) return finish();
-      page.appendChild(cursor);
+      // RevealCursor.init: park the cursor before the first character rather
+      // than at the end of the document.
+      const first = entries.find((e) => e.type === "char");
+      if (first) first.el.before(cursor);
+      else page.appendChild(cursor);
       tick();
     };
 

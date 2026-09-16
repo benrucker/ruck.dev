@@ -9,11 +9,11 @@
   <meta property="og:url" content="https://ruck.dev/whid10/" />
   <meta property="og:image" content="https://ruck.dev/big.jpg" />
 
-  <!-- Adobe Fonts: new web project for ruck.dev. Replace KIT_ID after creating it.
-       Families: canada-type-gibson, filmotype-yukon, rl-horizon, calvino,
-       corsario-variable, ltc-goudy-text-pro, fayte-pixel-hard, palatino-linotype -->
+  <!-- Adobe Fonts kit for ruck.dev: canada-type-gibson (400/600/700 + italics),
+       rl-horizon (400/700 + italics), calvino (400/700 + italics),
+       palatino-linotype (400/700 + italics). -->
   <link rel="preconnect" href="https://use.typekit.net" crossorigin />
-  <link rel="stylesheet" href="https://use.typekit.net/KIT_ID.css" />
+  <link rel="stylesheet" href="https://use.typekit.net/bms1voc.css" />
 
   <!-- Google Fonts: Fraunces (dub, you), Jacquard 12 + 24 (you), Geist + Geist Mono (default, lowlights body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,7 +38,10 @@
       <!-- HomepageSignedOut: animated logo (conic outline; every few seconds
            it drops out of frame and the exhibit logos rise into its place in
            a burst), gradient title, spinning conic sign-in button. -->
-      <div class="door">
+      <p>Hey! This page documents <em>whid10</em>, a project I made for my friends celebrating the 10-year anniversary of creating our Discord server (it's silly, I know, but I've known these peeps since forever).</p>
+
+      <!-- [whid10 logo] — the draft's logo slot; this is the animated logo. -->
+      <div class="door door--logo">
         <div class="whid-logo" id="whid-logo" aria-label="whid10 logo" role="img">
           <svg class="whid-logo__main" viewBox="0 0 383.02533 155.27582" aria-hidden="true">
             <defs>
@@ -61,25 +64,29 @@
           <img class="whid-logo__alt is-hidden" src="assets/logos/messages.svg" alt="" aria-hidden="true" />
           <img class="whid-logo__alt is-hidden" src="assets/logos/bots.svg" alt="" aria-hidden="true" />
         </div>
+      </div>
 
+      <p>We created a virtual museum where each exhibit showcased a different aspect of our time together: the messages we've sent, games we've played, music we've written, etc etc.</p>
+      <p>To make this site extra special, I decided that we could make each exhibit have a totally different visual style. This exploded the scope and pushed my design skills farther than ever before, but ended up being immensely rewarding. I'm happy with how it all turned out!</p>
+
+      <!-- [sign-in button] — the draft's sign-in slot. -->
+      <div class="door door--cta">
         <button class="conic-button" type="button">
           <svg class="conic-button__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 5.3A17 17 0 0 0 15.4 4l-.2.4a15 15 0 0 1 3.7 1.9 13.7 13.7 0 0 0-13.8 0A15 15 0 0 1 8.8 4.4L8.6 4a17 17 0 0 0-4.2 1.3C1.7 9.3 1 13.2 1.4 17a17 17 0 0 0 5.2 2.6l1.1-1.8a11 11 0 0 1-1.8-.9l.4-.3a12.2 12.2 0 0 0 11.4 0l.4.3-1.8.9 1.1 1.8A17 17 0 0 0 22.6 17c.5-4.4-.8-8.3-3-11.7ZM8.7 14.7c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Zm6.6 0c-1 0-1.9-1-1.9-2.1s.8-2.1 1.9-2.1 1.9 1 1.9 2.1-.8 2.1-1.9 2.1Z"/></svg><span class="conic-button__label"><span class="conic-button__text is-in">Sign in with Discord</span><span class="conic-button__text" aria-hidden="true">Just kidding!</span></span>
         </button>
       </div>
 
-      <div class="specimen">
-        <span class="font-header"><em>Header: Gibson italic</em></span>
-        <span class="font-text">Body: Gibson upright, 18px</span>
-        <span class="font-accent">Accent: Filmotype Yukon</span>
-      </div>
+      <p>If you're wondering why I don't just directly link it, it's because some messages are directly embedded in some of the pages. To respect (and protect) everyone's privacy, only people in the server can access the website.</p>
 
-      <p>Hey! This page documents a project I made for my friends celebrating the 10-year anniversary of creating our Discord server (it's silly, I know, but I've known these peeps since forever).</p>
-      <p>We created a museum, each exhibit showcasing a different aspect of our time together: the messages we've sent, games we've played, music we've written, etc etc.</p>
-      <p>To make this site extra special, I decided that we could make each exhibit have a totally different visual style. This exploded the scope, but ended up rewarding. I'm happy with all the distinct designs we came up with.</p>
-      <p>Going through the experience chronologically: each user has to sign in. People's messages were included in the final page, so to respect their privacy, the actual page is not publicly accessible.</p>
-      <p>Authentication is handled via Discord social sign-in integrated into NextAuth.</p>
+      <aside class="callout" role="note">
+        <p>Authentication is handled via Discord social sign-in integrated into NextAuth. There is no self-rolled system here; it's all OAuth.</p>
+        <p>Getting it working wasn't the hard part, but getting the user data into the application logic in a type-safe way involved some declaration workarounds.</p>
+        <p>Plus, getting Convex and NextAuth to communicate authentication state also took some effort.</p>
+      </aside>
     </div>
   </section>
+
+  <div class="seam seam--front-door-messages" aria-hidden="true"></div>
 
   <!-- ================================================================
        1. Messages
@@ -125,19 +132,28 @@
     </div>
 
     <div class="exhibit__inner">
-      <div class="specimen">
-        <span class="font-header"><em>Header: RL Horizon italic</em></span>
-        <span class="font-text">Body: RL Horizon upright, 18px</span>
-        <span class="font-accent">Accent: RL Horizon</span>
-      </div>
-
-      <p>We start off with the basic stats: messages per year, how many messages you sent, and things like that.</p>
+      <p>The very first exhibit shows off with the basic stats: messages per year, how many messages you sent, and things like that.</p>
       <p>Some charts are built dynamically, but dead-simple ones were hard-coded using regular CSS once we had the final data.</p>
-      <p class="todo">[screenshot of messages per year]</p>
+      <figure class="blog-figure">
+        <video
+          class="blog-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="videos/messages-per-year.jpg"
+        >
+          <source src="videos/messages-per-year.webm" type="video/webm" />
+          <source src="videos/messages-per-year.mp4" type="video/mp4" />
+        </video>
+      </figure>
       <p>There's secondary motion on this page: hover over the shapes in the background!</p>
       <p>The stats were generated via Python in Marimo notebooks using pandas. Using notebooks for data pipelines is a bit strange, but it makes it really easy to debug issues mid-transform; just print the table in that cell!</p>
     </div>
   </section>
+
+  <div class="seam seam--messages-ticket" aria-hidden="true"></div>
 
   <!-- ================================================================
        Your ticket (default theme). The one place the ticket appears.
@@ -173,30 +189,56 @@
     </div>
   </section>
 
+  <div class="seam seam--ticket-bots" aria-hidden="true"></div>
+
   <!-- ================================================================
        2. Bots
        ================================================================ -->
   <section id="bots" class="exhibit" data-theme="bots">
 
-    <!-- Bots sequence: beams, cherry-blossom petals, bot messages with
-         per-bot nameplate color, click-to-continue hint, Wordle tile reveal
-         with the screen glitch, crescendo and pop. Click replays it. -->
-    <div class="stage bots-stage">
-      <img class="bots-stage__beams" src="assets/bots/beams.png" alt="" loading="lazy" aria-hidden="true" />
-      <canvas class="bots-stage__petals" aria-hidden="true"></canvas>
-      <div class="crescendo" aria-hidden="true">
-        <div class="crescendo__vignette"></div>
-        <div class="crescendo__tint"></div>
-      </div>
-    </div>
+    <!-- Bots: the museum's light beams sit behind the exhibit and its
+         cherry-blossom petal swarm (CherryBlossomPetals on a 2D canvas) drifts
+         over the whole exhibit, like the sakura overlay in the recording. -->
+    <img class="bots-beams" src="assets/bots/beams.png" alt="" loading="lazy" aria-hidden="true" />
+    <canvas class="bots-petals" aria-hidden="true"></canvas>
 
     <div class="exhibit__inner">
-      <p>We have bots in our server, some created by us! A few stand out as "main characters" in their own right, which is why they got a group chat to share stats to the user.</p>
-      <p>The story here is that the official Wordle Discord integration is becoming more popular than our classic bots. The times are a-changing.</p>
+      <p>We have bots in our server, many of which were written by us!</p>
+      <p>A few of them stand out as "main characters" in their own right, which is why the next exhibit gives them a group chat to share stats with the user.</p>
+      <p>The storyline here is that the official Wordle Discord integration is becoming more popular than our classic bots. Oh the times, they are a-changing.</p>
       <p>Wordle only speaks in 5 letter words graded against the secret answer. Although "Wordle" itself is 6 letters long...</p>
-      <p class="todo">[gif of wordle exploding]</p>
+      <figure class="blog-figure">
+        <video
+          class="blog-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="videos/wordle-explodes.jpg"
+        >
+          <source src="videos/wordle-explodes.webm" type="video/webm" />
+          <source src="videos/wordle-explodes.mp4" type="video/mp4" />
+        </video>
+      </figure>
+      <figure class="blog-figure">
+        <video
+          class="blog-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="videos/bots-continuation.jpg"
+        >
+          <source src="videos/bots-continuation.webm" type="video/webm" />
+          <source src="videos/bots-continuation.mp4" type="video/mp4" />
+        </video>
+      </figure>
     </div>
   </section>
+
+  <div class="seam seam--bots-gamers" aria-hidden="true"></div>
 
   <!-- ================================================================
        3. Gamers
@@ -207,12 +249,6 @@
     <div class="gamers-bar gamers-bar--bottom" aria-hidden="true"></div>
 
     <div class="exhibit__inner">
-      <div class="specimen">
-        <span class="font-header">Header: Calvino</span>
-        <span class="font-text">Body: Calvino, 18px</span>
-        <span class="font-accent">Accent: Filmotype Yukon</span>
-      </div>
-
       <p>The games exhibit was designed and implemented by Ethan! It collects our Steam data together to showcase our favorite games of all time.</p>
       <p>This is the most museum-like exhibit of them all, like a long hallway with framed photos you have a passing interest in.</p>
       <p>Oh and there's free wine.</p>
@@ -221,6 +257,12 @@
       </figure>
     </div>
   </section>
+
+  <!-- No transition here: the OC exhibit is painted in the gamers hallway's own
+       dark (see "Section transitions" in whid10.css) so the word processor just
+       sits on the same floor. This seam adds no height; it only dissolves the
+       hallway's corner shading into that flat floor. -->
+  <div class="seam seam--gamers-oc" aria-hidden="true"></div>
 
   <!-- ================================================================
        4. Original Content
@@ -251,20 +293,19 @@
           </div>
         </div>
         <div class="wdoc__desk">
-          <div class="wdoc__page reveal-border">
+          <div class="wdoc__page">
             <div class="reveal-content">
               <h1>#original-content</h1>
               <p>We have a channel called #original-content. I love this channel! It lets us showcase our most creative selves.</p>
-              <p>In contrast with that beauty, I designed this one as an abominable pseudo-Word application that progressively reveals the script. The bold, italic, and underline buttons actually work!</p>
-              <p>We have a lot of amazing talent in the server and that should be the focus!</p>
-              <p class="todo">[screenshot of some of the art?]</p>
-              <p class="todo">[music player?]</p>
+              <p>In contrast with that beauty, I designed this one as an abominable pseudo-Word application that progressively reveals the script. The bold, italic, and underline buttons actually work! And we've all used creative software that <em>doesn't</em> actually work.</p>
               <p>Nested in this exhibit is a clone of Scrandle, the daily food-ranking game. That project involved a lot of manual data tagging, entry, and statistics. We don't have time to get into that here, but feel free to ask me about it!</p>
             </div>
           </div>
         </div>
       </div>
   </section>
+
+  <div class="seam seam--oc-dub" aria-hidden="true"></div>
 
   <!-- ================================================================
        5. The Dub
@@ -293,11 +334,14 @@
           <div class="dub-letter__grid">
             <div class="dub-letter__spacer" aria-hidden="true"></div>
             <div class="dub-letter__body">
-              <div class="dub-letter__avatar" aria-hidden="true"></div>
+              <div class="dub-letter__avatar" aria-hidden="true">
+                <img src="../smol.webp" alt="" width="168" height="168" loading="lazy" decoding="async" />
+              </div>
               <div class="dub-letter__text">
                 <div>
                   <p>This exhibit showcases a series of videos we made starting during COVID.</p>
                   <p>I aimed for a filmic look, although it may have ended up a bit on the nose...</p>
+                  <p>The challenge for this page was embedding a good amount of video content. I ended up transcoding teeny tiny versions of the videos to embed as background texture. Hovering over a background video would fade in its audio, letting you jump from moment to moment on a whim.</p>
                 </div>
               </div>
             </div>
@@ -305,40 +349,50 @@
         </div>
       </div>
     </div>
-
-    <div class="exhibit__inner">
-      <div class="specimen">
-        <span class="font-accent">Accent: Corsario</span>
-      </div>
-    </div>
   </section>
+
+  <div class="seam seam--dub-lowlights" aria-hidden="true"></div>
 
   <!-- ================================================================
        6. Lowlights
        ================================================================ -->
   <section id="lowlights" class="exhibit" data-theme="lowlights">
 
-    <!-- SlideDeck: the cardboard diorama the awards show plays in. Swinging
-         curtains and the spotlight gradient. -->
-    <div class="stage diorama">
-      <img class="diorama__curtain diorama__curtain--left" src="assets/lowlights/side-curtain-upgraded.webp" alt="" aria-hidden="true" loading="lazy" />
-      <img class="diorama__curtain diorama__curtain--right" src="assets/lowlights/side-curtain-upgraded-right.webp" alt="" aria-hidden="true" loading="lazy" />
-      <img class="diorama__valance diorama__valance--front" src="assets/lowlights/top-curtain-front.webp" alt="" aria-hidden="true" loading="lazy" />
-      <img class="diorama__valance diorama__valance--back" src="assets/lowlights/top-curtain-bottom.webp" alt="" aria-hidden="true" loading="lazy" />
-      <div class="diorama__spotlight" aria-hidden="true"></div>
-    </div>
+    <!-- SlideDeck: the curtains the awards show plays behind, hung on the
+         section itself rather than on a stage box, so they frame the copy and
+         the recording instead of an empty rectangle. No painted backdrop. -->
+    <img class="diorama__curtain diorama__curtain--left" src="assets/lowlights/side-curtain-upgraded.webp" alt="" aria-hidden="true" loading="lazy" />
+    <img class="diorama__curtain diorama__curtain--right" src="assets/lowlights/side-curtain-upgraded-right.webp" alt="" aria-hidden="true" loading="lazy" />
+    <img class="diorama__valance diorama__valance--front" src="assets/lowlights/top-curtain-front.webp" alt="" aria-hidden="true" loading="lazy" />
+    <img class="diorama__valance diorama__valance--back" src="assets/lowlights/top-curtain-bottom.webp" alt="" aria-hidden="true" loading="lazy" />
 
     <div class="exhibit__inner">
-      <p>This exhibit is an awards show, also designed and implemented by Ethan. It goes through the most reacted-to posts we've made over the last 10 years, culminating in the top post of all time!</p>
-      <p class="todo">[gif of one of the pages]</p>
-      <p class="todo">[screenshot of The Do Times]</p>
-
-      <div class="specimen">
-        <span class="font-header">Header: LTC Goudy Text</span>
-        <span class="font-accent">Accent: LTC Goudy Text</span>
-      </div>
+      <p>The next exhibit is an awards show designed and implemented by Ethan. It goes through the most reacted-to posts we've made over the last 10 years, culminating in the top post of all time!</p>
+      <figure class="blog-figure">
+        <video
+          class="blog-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="videos/lowlights-intro.jpg"
+        >
+          <source src="videos/lowlights-intro.webm" type="video/webm" />
+          <source src="videos/lowlights-intro.mp4" type="video/mp4" />
+        </video>
+      </figure>
+      <p>It also included a fake newspaper snippet going into some more details. It also gives some personal stats for the user's reaction counts and most popular messages.</p>
+      <!-- The Do Times: 293x909, a newspaper column. It hangs under the copy
+           that introduces it, centred at its native width and tilted a little,
+           like a clipping pinned to the page. -->
+      <figure class="blog-figure do-times">
+        <img src="images/the%20do%20times.png" alt="" width="293" height="909" loading="lazy" decoding="async" />
+      </figure>
     </div>
   </section>
+
+  <div class="seam seam--lowlights-you" aria-hidden="true"></div>
 
   <!-- ================================================================
        7. You (magic theme)
@@ -353,33 +407,49 @@
     <div class="you-scroll" data-vortex-track>
       <!-- Live vortex sphere (whid10-vortex.js mounts a canvas here) -->
       <div class="stage you-stage" data-vortex>
+        <!-- The museum floats its exhibit title in front of the sphere while
+             the camera still sits outside it (app/you/components/IntroTitle.tsx
+             renders ExhibitTitle in an <Html transform> at z = 10, visible only
+             in the "before" phase). Here it's a DOM overlay over the sphere
+             that fades out as the approach begins. Decorative: the copy below
+             says everything this does. -->
+        <p class="you-title" aria-hidden="true">you</p>
+
         <div class="you-reveal">
           <div class="you-media">
-            <!-- One tilting card, same tilt code as the ticket -->
-            <div class="holo holo--card">
-              <div class="holo__card">
-                <div class="holo__content"></div>
-                <div class="holo__shimmer"></div>
-                <div class="holo__glare"></div>
-              </div>
-            </div>
+            <!-- A recording of the exhibit itself, embedded like the other
+                 recordings on this page, so the cards are shown being drawn
+                 rather than mocked up in DOM next to the live vortex. -->
+            <video
+              class="blog-video"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster="videos/you.jpg"
+            >
+              <source src="videos/you.webm" type="video/webm" />
+              <source src="videos/you.mp4" type="video/mp4" />
+            </video>
           </div>
 
           <div class="you-copy">
-            <p>This exhibit is specific to the signed-in user. Given how they fall on 5 different stats, they are given 5 tarot cards (out of 10): how many attachments, invites, messages, pings, and reactions you use compared to everyone else.</p>
-            <p>The card designs were painted by John.</p>
-            <p>I learned the basics of shader-building for this page. That tended to confuse people since they knew I was working on a website, not a game.</p>
+            <p>This exhibit is inspired by tarot readings, thus the magic vortex and cards you see in the clip on the left.</p>
+            <p>This is because we actually draw 5 tarot cards for the user out of a possible 10 using different metrics: how many attachments, invites, messages, pings, and reactions they used compared to everyone else.</p>
+            <p>The card designs were painted by John, inspired by Balatro's tarot set.</p>
+            <p>The shader was written by me (with Claude). I learned the basics of how shaders worked and found techniques for generating noise and distortion. I didn't learn how to map the shader to geometry, so that was all done using coding agents.</p>
+
+            <aside class="callout" role="note">
+              <p>Telling people that I was working on a shader for this project confused them. I don't blame them - hardly any other websites have shaders in them. (Except for some people's portfolios that were a huge inspiration and I can't find anymore 😭)</p>
+            </aside>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="exhibit__inner">
-      <div class="specimen">
-        <span class="font-header">Header: Fayte Pixel Hard</span>
-      </div>
-    </div>
   </section>
+
+  <div class="seam seam--you-gift-shop" aria-hidden="true"></div>
 
   <!-- ================================================================
        8. Gift shop
@@ -390,15 +460,14 @@
          screenshot rather than a rebuild. -->
 
     <div class="exhibit__inner">
-      <div class="specimen">
-        <span class="font-header"><em>Header: Gibson italic</em></span>
-        <span class="font-text">Body: Gibson, 18px</span>
-        <span class="font-accent">Accent: Gibson</span>
-      </div>
-
       <p>The experience ended at the gift shop, where everyone could place an order for a t-shirt I designed! The orders were stored in Convex, and the shirts will be printed Soon&trade;</p>
+      <figure class="blog-figure">
+        <img src="images/giftshop.png" alt="" width="2238" height="1328" loading="lazy" decoding="async" />
+      </figure>
     </div>
   </section>
+
+  <div class="seam seam--gift-shop-epilogue" aria-hidden="true"></div>
 
   <!-- ================================================================
        Epilogue: default theme.
@@ -406,15 +475,18 @@
   <section id="epilogue" class="exhibit" data-theme="default">
     <div class="exhibit__inner">
 
-      <p>This project was herculean. I'm not sure how we even managed to pull it off in the time frame. In the end, leading a team of 6 is a surprisingly high number. Each person had their own interests and scope; John was an illustrator for the tarot card, Tristan did the writing for Bots and Games, while Jun wrote the integration for Steam and LLM-based game categorization in messages, and Ethan implemented Games and Lowlights.</p>
+      <p>This project was herculean. I'm not sure how we even managed to pull it off in the time frame. In the end, 6 people contributed to this project. Each person had their own interests and scope: John was an illustrator for the tarot cards, Tristan did the writing for Bots and Games, Jun wrote the integration for Steam and an LLM-based game classifier, and Ethan implemented Games and Lowlights.</p>
       <p>I couldn't have asked for a better team, or a group of friends to make this kind of thing for.</p>
+      <p>Thanks for reading!</p>
 
-      <p>Content warning: hot takes:</p>
+      <p>Content warning, hot takes:</p>
       <figure class="hot-takes">
         <img src="assets/epilogue/dev-stack-takeaways.png" alt="A Discord message listing dev stack takeaways from working on whid10: Next.js, Tailwind, shadcn, Base UI, Vercel, Convex, pnpm monorepo, ESLint, and marimo." loading="lazy" />
       </figure>
     </div>
   </section>
+
+  <div class="seam seam--epilogue-thank-you" aria-hidden="true"></div>
 
   <!-- ================================================================
        9. Thank you

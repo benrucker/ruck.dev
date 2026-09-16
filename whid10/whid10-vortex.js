@@ -61,6 +61,14 @@ const INTRO_DURATION_MS = APPROACH_DURATION_MS + DESCENT_DURATION_MS;
 // entrances. whid10.css's animation-range percentages are these ms over
 // TIMELINE_MS.
 const TIMELINE_MS = INTRO_DURATION_MS + CARD_ENTRANCE_STAGGER_MS + CARD_ENTRANCE_DURATION_MS;
+// Scroll arrives in steps (a wheel notch is ~5% of the pinned span, ~half a
+// second of timeline, and ViewTimeline.currentTime only refreshes per
+// frame), so the drawn progress chases the scrolled progress with this
+// time constant instead of jumping to it. ~63% of a step lands within one
+// tau, ~95% within three.
+const SCROLL_SMOOTHING_TAU_MS = 100;
+// Below this gap (≈1 ms of timeline) the chase snaps shut.
+const SCROLL_SNAP_EPSILON = 1e-4;
 
 // utils/hermiteEase.ts: cubic Hermite (0,0)→(1,1) with endpoint velocities.
 function hermiteEase(t, v0, v1) {
@@ -484,9 +492,22 @@ export function mountVortex(container) {
   };
 
   const clock = new THREE.Clock();
-  const draw = () => {
+  // `target` is where the scroll position says the timeline is; `shown` is
+  // where the camera is drawn. Each running frame closes the gap with a
+  // frame-rate-independent exponential (1 - e^(-dt/tau)); with no frame
+  // delta to integrate over (reduced motion, a paused redraw from resize,
+  // the first frame after the loop resumes) it snaps.
+  const progress = { target: 0, shown: 0 };
+  const draw = (dt) => {
+    progress.target = Math.min(1, Math.max(0, readProgress()));
+    const gap = progress.target - progress.shown;
+    if (dt == null || reduceMotion || Math.abs(gap) < SCROLL_SNAP_EPSILON) {
+      progress.shown = progress.target;
+    } else {
+      progress.shown += gap * (1 - Math.exp(-dt / SCROLL_SMOOTHING_TAU_MS));
+    }
     uniforms.iTime.value = clock.getElapsedTime();
-    applyElapsed(Math.min(1, Math.max(0, readProgress())) * TIMELINE_MS);
+    applyElapsed(progress.shown * TIMELINE_MS);
     camera.layers.set(SPHERE_LAYER);
     renderer.setRenderTarget(renderTarget);
     renderer.clear();
@@ -503,9 +524,13 @@ export function mountVortex(container) {
 
   let running = false;
   let raf = 0;
-  const loop = () => {
+  let lastFrame = 0; // 0 = no previous frame to measure from → snap
+  // Runs every frame while on screen (the shader's iTime never idles), so
+  // the chase always has frames to settle in.
+  const loop = (now) => {
     if (!running) return;
-    draw();
+    draw(lastFrame ? now - lastFrame : null);
+    lastFrame = now;
     raf = requestAnimationFrame(loop);
   };
 
@@ -519,6 +544,7 @@ export function mountVortex(container) {
       cancelAnimationFrame(raf);
       if (running) {
         clock.start();
+        lastFrame = 0;
         raf = requestAnimationFrame(loop);
       } else {
         clock.stop();
